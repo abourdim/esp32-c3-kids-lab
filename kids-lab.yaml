@@ -1,0 +1,241 @@
+# ============================================================
+# ESP32-C3 Kids Lab — ESPHome Configuration
+# ============================================================
+# Flash with:  esphome run kids-lab.yaml
+# Dashboard:   esphome dashboard ./
+# ============================================================
+
+esphome:
+  name: kids-lab
+  friendly_name: Kids Lab
+  platformio_options:
+    board_build.flash_mode: dio   # CRITICAL for SuperMini
+
+esp32:
+  board: esp32-c3-devkitm-1
+  variant: ESP32C3
+  framework:
+    type: arduino
+
+# ---- WiFi Access Point ----
+wifi:
+  # Uncomment below to also join your home WiFi:
+  # ssid: "YourHomeWiFi"
+  # password: "your-password"
+  ap:
+    ssid: "KidsLab"
+    password: ""           # Open network for kids
+
+# ---- Captive Portal (redirects to web app) ----
+captive_portal:
+
+# ---- Web Server with REST API ----
+web_server:
+  port: 80
+  version: 3
+  local: true             # Serve files from flash
+
+# ---- Logger ----
+logger:
+  level: DEBUG
+
+# ---- OTA Updates ----
+ota:
+  - platform: esphome
+
+# ---- Uncomment for Home Assistant ----
+# api:
+#   encryption:
+#     key: "YOUR_KEY_HERE"
+
+# ============================================================
+# OUTPUTS (low-level pin control)
+# ============================================================
+
+output:
+  # Onboard blue LED (GPIO8, inverted on SuperMini)
+  - platform: gpio
+    pin:
+      number: 8
+      inverted: true
+    id: onboard_led_output
+
+  # Buzzer PWM output (GPIO2)
+  - platform: ledc
+    pin: 2
+    id: buzzer_output
+
+  # Servo PWM output (GPIO0)
+  - platform: ledc
+    pin: 0
+    id: servo_output
+    frequency: 50 Hz
+
+# ============================================================
+# LIGHTS
+# ============================================================
+
+light:
+  # Onboard LED (on/off)
+  - platform: binary
+    name: "Onboard LED"
+    id: onboard_led
+    output: onboard_led_output
+
+  # NeoPixel strip (GPIO3, 8 LEDs)
+  - platform: neopixelbus
+    type: GRB
+    variant: WS2812
+    pin: 3
+    num_leds: 8
+    name: "NeoPixels"
+    id: neopixels
+    effects:
+      - addressable_rainbow:
+          name: "Rainbow"
+          speed: 10
+          width: 50
+      - addressable_color_wipe:
+          name: "Color Wipe"
+      - pulse:
+          name: "Pulse"
+          transition_length: 1s
+          update_interval: 1s
+      - strobe:
+          name: "Strobe"
+          colors:
+            - state: true
+              brightness: 100%
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 100ms
+            - state: false
+              duration: 100ms
+
+# ============================================================
+# BUZZER (RTTTL melodies)
+# ============================================================
+
+rtttl:
+  output: buzzer_output
+  id: buzzer
+
+# ============================================================
+# SERVO
+# ============================================================
+
+servo:
+  - id: my_servo
+    output: servo_output
+
+# ============================================================
+# SENSORS
+# ============================================================
+
+sensor:
+  # DHT22 — Temperature & Humidity (GPIO4)
+  - platform: dht
+    pin: 4
+    model: DHT22
+    temperature:
+      name: "Temperature"
+      id: temp_sensor
+    humidity:
+      name: "Humidity"
+      id: hum_sensor
+    update_interval: 5s
+
+  # LDR — Light level (GPIO5, analog)
+  - platform: adc
+    pin: 5
+    name: "Light Level"
+    id: light_sensor
+    update_interval: 1s
+    attenuation: auto
+
+  # WiFi signal strength
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 30s
+
+  # Uptime
+  - platform: uptime
+    name: "Uptime"
+    update_interval: 10s
+
+# ============================================================
+# BUTTONS & BINARY SENSORS
+# ============================================================
+
+binary_sensor:
+  # BOOT button on SuperMini (GPIO9)
+  - platform: gpio
+    pin:
+      number: 9
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Boot Button"
+    id: boot_button
+
+  # External push button (GPIO1)
+  - platform: gpio
+    pin:
+      number: 1
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Push Button"
+    id: push_button
+
+# ============================================================
+# VIRTUAL BUTTONS (trigger actions from web UI)
+# ============================================================
+
+button:
+  # Play melodies
+  - platform: template
+    name: "Play Mario"
+    id: play_mario
+    on_press:
+      - rtttl.play: "mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p"
+
+  - platform: template
+    name: "Play Star Wars"
+    id: play_starwars
+    on_press:
+      - rtttl.play: "starwars:d=4,o=5,b=180:8f,8f,8f,2a#.,2f6,8d#6,8d6,8c6,2a#.6,f6,8d#6,8d6,8c6,2a#.6"
+
+  - platform: template
+    name: "Play Beep"
+    id: play_beep
+    on_press:
+      - rtttl.play: "beep:d=16,o=5,b=200:c,e,g,c6"
+
+  - platform: template
+    name: "Stop Buzzer"
+    id: stop_buzzer
+    on_press:
+      - rtttl.stop:
+
+  # Restart device
+  - platform: restart
+    name: "Restart"
+
+# ============================================================
+# NUMBER INPUTS (sliders in web UI)
+# ============================================================
+
+number:
+  # Servo angle slider
+  - platform: template
+    name: "Servo Angle"
+    id: servo_angle
+    min_value: -100
+    max_value: 100
+    step: 1
+    initial_value: 0
+    optimistic: true
+    set_action:
+      - servo.write:
+          id: my_servo
+          level: !lambda "return x / 100.0;"
