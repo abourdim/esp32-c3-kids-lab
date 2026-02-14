@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/ESPHome-Kids%20Lab-22c55e?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome">
   <img src="https://img.shields.io/badge/ESP32--C3-SuperMini-3b82f6?style=for-the-badge&logo=espressif&logoColor=white" alt="ESP32-C3">
   <img src="https://img.shields.io/badge/micro%3Abit-BLE%20%2B%20UART-f97316?style=for-the-badge&logo=micro:bit&logoColor=white" alt="micro:bit">
-  <img src="https://img.shields.io/badge/version-1.2-9ca3af?style=for-the-badge" alt="v1.3">
+  <img src="https://img.shields.io/badge/version-1.2-9ca3af?style=for-the-badge" alt="v1.2">
 </p>
 
 ---
@@ -724,7 +724,7 @@ Already seen the [PlatformIO version](https://github.com/nicmusic/bit-playground
 |---|---|---|
 | v1.0 | 2026-02-14 | Initial release — 15 components, web app, EN/FR |
 | v1.1 | 2026-02-14 | micro:bit split into UART + BLE, own sidebar category |
-| v1.3 | 2026-02-14 | Version tag in header, versioned output files |
+| v1.2 | 2026-02-14 | Version tag in header, versioned output files |
 
 ---
 

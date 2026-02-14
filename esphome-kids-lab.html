@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Kids Lab — ESPHome Guide v1.3</title>
+<title>Kids Lab — ESPHome Guide v1.4</title>
 <style>
 /* ============================================================
    CSS VARIABLES — 4 themes from bit-playground
@@ -270,6 +270,29 @@ a{color:var(--accent);text-decoration:none}
     .header-right{gap:5px}
 }
 .ver{font-size:.55rem;color:var(--muted);opacity:.5;letter-spacing:.04em;font-weight:400;margin-left:6px;white-space:nowrap}
+
+/* RTL support */
+[dir="rtl"] .sidebar{border-right:none;border-left:1px solid var(--card-border)}
+[dir="rtl"] .sidebar-item{border-left:none;border-right:3px solid transparent}
+[dir="rtl"] .sidebar-item.active{border-left-color:transparent;border-right-color:var(--accent)}
+[dir="rtl"] .sidebar-item .si-status{margin-left:0;margin-right:auto}
+[dir="rtl"] .header{direction:rtl}
+[dir="rtl"] .header-right{flex-direction:row-reverse}
+[dir="rtl"] .card-title,.acc-head{direction:rtl}
+[dir="rtl"] .steps{direction:rtl}
+[dir="rtl"] .step{padding-left:0;padding-right:36px}
+[dir="rtl"] .step::before{left:auto;right:0}
+[dir="rtl"] .hint-box{border-left:none;border-right:3px solid}
+[dir="rtl"] .hint-box.tip{border-right-color:#22c55e}
+[dir="rtl"] .hint-box.warn{border-right-color:#f0a040}
+[dir="rtl"] .hint-box.danger{border-right-color:#f06060}
+[dir="rtl"] .code-block pre{direction:ltr;text-align:left}
+[dir="rtl"] .wiring{direction:ltr;text-align:left}
+[dir="rtl"] .ver{margin-left:0;margin-right:6px}
+[dir="rtl"] .main{text-align:right}
+[dir="rtl"] .monitor-grid{direction:rtl}
+[dir="rtl"] .action-row{direction:rtl}
+[dir="rtl"] .page-tagline{direction:rtl}
 </style>
 </head>
 <body>
@@ -284,7 +307,7 @@ a{color:var(--accent);text-decoration:none}
         <svg class="site-logo" viewBox="-92.820084 179.975632 6 3.214096" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor" fill-rule="evenodd"><path d="M-90.269 180.707c0-.003-.012-.152-.024-.331-.012-.179-.023-.334-.024-.344l-.002-.018h.023c.012 0 .037-.002.055-.004.018-.002.049-.004.068-.005l.035-.002-.009.128c-.005.071-.01.139-.011.151l-.002.022.06-.098c.034-.053.078-.125.099-.158l.037-.06.036-.003c.02-.001.058-.004.086-.006.027-.002.058-.004.067-.003l.016.001-.112.169-.112.169.141.176c.078.096.141.177.141.178 0 .002-.002.003-.004.003-.017 0-.197.012-.202.014-.004.001-.035-.035-.11-.132-.057-.073-.105-.133-.107-.132-.002.001-.009.012-.015.023l-.012.021.008.115c.006.085.007.116.004.118-.006.003-.043.007-.117.01-.047.002-.057.001-.059-.004z"/><path d="M-89.191 180.769c-.077-.016-.12-.029-.169-.052-.034-.017-.112-.066-.121-.077-.004-.005-.002-.012.035-.147.006-.023.018-.02.042.01.054.069.137.12.215.133.036.006.039.006.06 0 .036-.012.054-.038.047-.07-.004-.022-.04-.051-.101-.083-.072-.038-.094-.052-.127-.083a.2.2 0 00-.057-.182c.017-.082.068-.133.159-.158.039-.01.108-.011.154-.001.073.016.147.047.21.088.033.022.036.025.034.034-.001.005-.011.04-.021.078-.018.065-.019.067-.028.066-.005 0-.013-.006-.017-.012-.011-.016-.058-.06-.077-.074a.27.27 0 00-.162-.054c-.053.005-.083.042-.064.081.009.019.033.036.098.071.104.055.155.098.178.149.013.028.016.08.007.117-.028.108-.117.171-.242.17-.02 0-.045-.002-.055-.004z"/><path d="M-91.104 180.904c-.031-.069-.095-.212-.142-.318-.048-.106-.086-.194-.086-.194.002-.002.083-.039.197-.089.054-.024.113-.048.131-.054.08-.025.155-.014.204.031.024.021.042.051.057.094a.24.24 0 01-.01.071c-.001.031-.003.042-.011.064-.012.03-.031.065-.039.072-.003.003-.006.006-.006.008 0 .003.036.023.205.11.061.032.115.06.119.063.009.006.005.008-.085.048-.052.023-.098.042-.103.043-.004 0-.07-.034-.146-.075l-.138-.075-.026.012-.027.012.049.112.049.117c.001.004-.025.017-.078.04-.042.02-.079.035-.081.035s-.027-.056-.058-.125zm.11-.318c.066-.032.091-.059.091-.1a.08.08 0 00-.05-.09c-.029-.012-.052-.007-.121.023l-.041.019c-.002.001.073.169.075.169 0 0 .02-.01.046-.02z"/><path d="M-88.329 181.181l-.071-.05c-.001 0 .037-.058.085-.128l.085-.129c-.003-.003-.135.089-.172.114l-.018-.012-.087.126c-.047.069-.088.125-.09.126-.004 0-.146.097-.146.099 0 .001.179.261.36.521.02.029.037.053.039.053.002.001.113-.074.146-.098-.001 0-.03-.046-.069-.101-.039-.056-.071-.103-.072-.106-.001-.003.033-.028.091-.069.051-.035.094-.064.096-.065.002 0 .036-.045.075-.102.039-.056.073-.103.074-.103.005 0 .145.097.145.1 0 .006-.395.573-.399.573-.002 0-.035-.022-.073-.048z"/><path d="M-91.754 181.531c-.135-.019-.289-.164-.329-.309a.33.33 0 01.002-.153c.032-.111.146-.223.256-.252.04-.01.121-.01.161.002.061.017.123.056.18.113.054.053.09.108.11.166a.43.43 0 01.014.082.34.34 0 01-.018.122c-.024.062-.088.138-.152.18-.068.046-.139.062-.224.049zm.149-.168c.06-.027.093-.094.079-.157-.022-.095-.136-.21-.234-.233-.045-.011-.086 0-.124.033-.02.018-.04.054-.043.081-.008.057.027.129.095.197.081.081.162.109.227.08z"/><path d="M-90.371 181.625a.09.09 0 01-.046-.076c-.058-.128-.058-.128-.072-.131a2.7 2.7 0 00-.12 0l-.007.015c-.012.021-.048.054-.071.065a.14.14 0 01-.182-.032.19.19 0 01-.032-.075.22.22 0 01.013-.06.18.18 0 01.074-.074c.023-.011.03-.012.061-.012.062 0 .105.021.137.069l.018.025.139.002.14.001.019-.01c.018-.009.02-.012.042-.054.012-.024.041-.086.063-.137a.93.93 0 01.067-.107c-.012-.018-.058-.017-.113-.013-.006.004-.006.005-.001.019.003.008.02.046.037.084.017.039.043.096.058.128.028.064.046.088.07.093.007.001.075.004.15.005l.137.002.013.02a.17.17 0 00.066.058c.017.008.025.01.066.01.046 0 .048 0 .074-.014z"/><path d="M-92.152 182.549l-.105-.011-.108-.012c-.029-.003-.078-.009-.107-.011l-.108-.011c-.029-.003-.068-.008-.097-.011-.028-.003-.076-.008-.104-.012-.029-.003-.053-.006-.054-.007-.001-.002.012-.04.029-.085.029-.077.031-.082.041-.083.006-.001.037.003.07.008.032.005.084.013.113.018l.076.012.076.012c.018.003.052.008.072.011.018.003.033.005.034.005 0 0-.087.06-.193.134-.107.073-.195.133-.196.135-.001.001.01.038.027.082l.03.078.019-.001c.011 0 .042-.003.07-.006.028-.003.073-.009.1-.013.028-.003.062-.008.076-.009.022-.003.049-.007.154-.019.018-.003.037-.004.042-.004.006 0-.061.045-.186.125-.108.068-.197.125-.198.127-.004.003.055.169.06.167.004 0 .028-.003.275-.028.03-.003.073-.008.095-.01.023-.002.044-.005.049-.006.007-.002.007-.002.002.004-.003.003-.083.059-.176.123-.094.064-.173.119-.175.121-.007.007.059.185.068.184.004 0 .027-.003.053-.005z"/><path d="M-87.128 182.564a.17.17 0 01-.053-.027.46.46 0 01-.12-.198c-.008-.034-.016-.062-.016-.062s-.017.003-.037.008c-.12.03-.18.044-.182.042-.004-.002.037-.167.04-.169.001-.001.052-.014.114-.03.066-.015.17-.04.236-.057.066-.016.165-.041.221-.055.056-.014.105-.025.108-.024.005.001-.003.028-.026.123-.043.171-.047.193-.047.24 0 .111.053.18.16.21.042.011.112.011.149-.002zm.099-.175a.08.08 0 00.062-.087c0-.023-.013-.091-.019-.103-.002-.003-.032.003-.098.019l-.098.026c-.003.003.016.074.026.095.012.025.034.047.056.054.02.006.04.005.071-.004z"/><path d="M-90.937 182.607a.22.22 0 01-.074-.075.19.19 0 01-.01-.059c0-.034.001-.039.013-.063a.2.2 0 01.074-.074c.024-.011.029-.012.07-.012.042 0 .046 0 .067.011a.2.2 0 01.073.064l.013.02.115.001c.079 0 .117-.002.12-.005.002-.002.026-.051.051-.108l.048-.104h.049c.026 0 .053.001.058.003.01.004.01.004.005.018l-.037.084-.037.084c-.014.038-.04.096-.054.128-.029.064-.047.088-.071.092l-.15.005-.137.002-.013.02c-.016.025-.04.047-.066.059-.017.008-.025.01-.066.01-.046 0-.048 0-.074-.014z"/><path d="M-89.824 182.831h-.002v-.087h2.998v.089h-2.998z"/><path d="M-90.825 182.969v-.043h3.997v.086h-3.997z"/><path d="M-92.82 183.147v-.043h5.992v.086h-5.992z"/></g></svg>
         <div>
             <h1 data-i18n="title">ESP32-C3 KIDS LAB</h1>
-            <div class="subtitle"><span data-i18n="subtitle">Play • Learn • Create</span> <span class="ver">v1.3 · 2026-02-14</span></div>
+            <div class="subtitle"><span data-i18n="subtitle">Play • Learn • Create</span> <span class="ver">v1.4 · 2026-02-14</span></div>
         </div>
     </div>
     <div class="header-right">
@@ -297,6 +320,7 @@ a{color:var(--accent);text-decoration:none}
         <div class="lang-group">
             <button class="lang-btn active" onclick="setLang('en')">EN</button>
             <button class="lang-btn" onclick="setLang('fr')">FR</button>
+            <button class="lang-btn" onclick="setLang('ar')">عر</button>
         </div>
         <button class="chip" id="connChip" onclick="openConn()">
             <span class="chip-dot"></span>
@@ -392,6 +416,31 @@ fr: {
     step1:'Installer ESPHome', step1d:'Ouvre un terminal et lance :',
     step2:'Branche ta carte', step2d:'Câble USB-C données → ESP32-C3 SuperMini',
     step3:'Flash !', step3d:'Depuis ton dossier projet :',
+},
+ar: {
+    title:'مختبر ESP32-C3 للأطفال', subtitle:'العب • تعلّم • ابتكر',
+    offline:'غير متصل', ready:'!جاهز', conn_title:'اتصل بـ ESP32',
+    conn_sub:'أدخل عنوان IP الخاص بـ ESP32-C3', conn_go:'اتصال', conn_cancel:'إلغاء',
+    cat_guide:'الدليل', cat_microbit:'micro:bit', cat_output:'مخرجات', cat_sensor:'حسّاسات', cat_input:'مدخلات', cat_extra:'المزيد',
+    nav_home:'الرئيسية', nav_setup:'التثبيت', nav_yaml:'إعدادات YAML', nav_flash:'ترجمة وتحميل',
+    nav_api:'واجهة REST', nav_test:'اختبار', nav_fix:'حل المشاكل', nav_help:'مساعدة',
+    tag_home:"!مغامرة ESP32 تبدأ هنا",
+    tag_setup:"!المستوى 1: جهّز عدّتك",
+    tag_yaml:"بدون كود؟ YAML يقوم بالشغل",
+    tag_flash:"جاري التحميل... زرع دماغ قيد التنفيذ 🧠",
+    tag_api:".الـ ESP32 صار عنده موقع. فلكس",
+    tag_test:"!اضغط زر LED بقوة",
+    tag_fix:"...مو خلل، ميزة... أمزح",
+    tag_help:".عالق؟ لا تقلق. حتى المحترفين يبحثون في جوجل",
+    try_it:'!جرّب', wiring:'التوصيل', yaml:'YAML ESPHome', api_ref:'واجهة REST',
+    challenge:'!جرّب هذا', not_installed:'أضف YAML للتفعيل',
+    on:'تشغيل', off:'إيقاف', stop:'إيقاف', play:'تشغيل',
+    copy:'نسخ', copied:'!تم النسخ', brightness:'السطوع', angle:'الزاوية',
+    pin:'منفذ', difficulty:'الصعوبة',
+    win:'ويندوز', lin:'لينكس',
+    step1:'تثبيت ESPHome', step1d:':افتح الطرفية وشغّل',
+    step2:'وصّل اللوحة', step2d:'ESP32-C3 SuperMini → كابل USB-C بيانات',
+    step3:'!فلاش', step3d:':من مجلد المشروع',
 }
 };
 var lang = 'en';
@@ -407,6 +456,8 @@ var COMPONENTS = [
      challenge:'Make it blink 3 times when you press the BOOT button!'},
  fr:{name:'LED intégrée',desc:'La lumière bleue sur ta carte. Aucun fil !',
      challenge:'Fais-la clignoter 3 fois quand tu appuies sur BOOT !'},
+ ar:{name:'LED مدمجة',desc:'!الضوء الأزرق على لوحتك. بدون أسلاك',
+     challenge:'!خلّها تومض 3 مرات لما تضغط زر BOOT'},
  pin:'GPIO8 (inverted)',
  yaml:'light:\n  - platform: binary\n    name: "Onboard LED"\n    output: onboard_led_output\n\noutput:\n  - platform: gpio\n    pin:\n      number: 8\n      inverted: true\n    id: onboard_led_output',
  api:[{m:'POST',p:'/light/onboard_led/turn_on',l:'ON'},{m:'POST',p:'/light/onboard_led/turn_off',l:'OFF'}],
@@ -418,6 +469,8 @@ var COMPONENTS = [
      challenge:'Make a rainbow nightlight that turns on when the room gets dark!'},
  fr:{name:'Ruban NeoPixel',desc:'LEDs magiques — chaque pixel une couleur différente !',
      challenge:'Fabrique une veilleuse arc-en-ciel qui s\'allume dans le noir !'},
+ ar:{name:'شريط NeoPixel',desc:'!أضواء سحرية — كل بيكسل لون مختلف',
+     challenge:'!اصنع ضوء ليلي بألوان قوس قزح يشتغل لما الغرفة تظلم'},
  pin:'GPIO3',
  yaml:'light:\n  - platform: neopixelbus\n    type: GRB\n    variant: WS2812\n    pin: 3\n    num_leds: 8\n    name: "NeoPixels"\n    effects:\n      - addressable_rainbow:\n          name: "Rainbow"\n      - pulse:\n          name: "Pulse"',
  api:[{m:'POST',p:'/light/neopixels/turn_on?r=255&g=0&b=0',l:'Red'},{m:'POST',p:'/light/neopixels/turn_on?effect=Rainbow',l:'Rainbow'},{m:'POST',p:'/light/neopixels/turn_off',l:'OFF'}],
@@ -430,6 +483,8 @@ var COMPONENTS = [
      challenge:'Add your own RTTTL melody — find one online and paste it in!'},
  fr:{name:'Buzzer passif',desc:'Joue des mélodies comme Mario & Star Wars !',
      challenge:'Ajoute ta propre mélodie RTTTL — trouve-en une en ligne !'},
+ ar:{name:'جرس سلبي',desc:'!شغّل ألحان مثل ماريو وستار وورز',
+     challenge:'!أضف لحنك الخاص بصيغة RTTTL — ابحث عن واحد على الإنترنت'},
  pin:'GPIO2',
  yaml:'output:\n  - platform: ledc\n    pin: 2\n    id: buzzer_output\n\nrtttl:\n  output: buzzer_output\n  id: buzzer\n\nbutton:\n  - platform: template\n    name: "Play Mario"\n    on_press:\n      - rtttl.play: "mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6"',
  api:[{m:'POST',p:'/button/play_mario/press',l:'Mario'},{m:'POST',p:'/button/play_beep/press',l:'Beep'},{m:'POST',p:'/button/stop_buzzer/press',l:'Stop'}],
@@ -441,6 +496,8 @@ var COMPONENTS = [
      challenge:'Build a barrier gate that opens when motion is detected!'},
  fr:{name:'Servomoteur',desc:'Tourne à l\'angle exact que tu veux. Bras de robot !',
      challenge:'Construis une barrière qui s\'ouvre quand un mouvement est détecté !'},
+ ar:{name:'محرك سيرفو',desc:'!يدور للزاوية اللي تبيها بالضبط. ذراع روبوت',
+     challenge:'!اصنع حاجز يفتح لما يكتشف حركة'},
  pin:'GPIO0',
  yaml:'output:\n  - platform: ledc\n    pin: 0\n    id: servo_output\n    frequency: 50 Hz\n\nservo:\n  - id: my_servo\n    output: servo_output\n\nnumber:\n  - platform: template\n    name: "Servo Angle"\n    min_value: -100\n    max_value: 100\n    step: 1\n    optimistic: true\n    set_action:\n      - servo.write:\n          id: my_servo\n          level: !lambda "return x / 100.0;"',
  api:[{m:'POST',p:'/number/servo_angle/set?value=0',l:'Center'},{m:'POST',p:'/number/servo_angle/set?value=-100',l:'-100'},{m:'POST',p:'/number/servo_angle/set?value=100',l:'100'}],
@@ -452,6 +509,8 @@ var COMPONENTS = [
      challenge:'Make a smart lamp that turns on at sunset (use LDR)!'},
  fr:{name:'Module relais',desc:'Un interrupteur pour les GROS trucs — lampes, ventilateurs !',
      challenge:'Fabrique une lampe intelligente qui s\'allume au coucher du soleil !'},
+ ar:{name:'وحدة ريلاي',desc:'!مفتاح للأشياء الكبيرة — مصابيح، مراوح. كليك',
+     challenge:'!(اصنع مصباح ذكي يشتغل وقت الغروب (استخدم LDR'},
  pin:'GPIO7',
  yaml:'switch:\n  - platform: gpio\n    pin: 7\n    name: "Relay"\n    id: relay',
  api:[{m:'POST',p:'/switch/relay/turn_on',l:'ON'},{m:'POST',p:'/switch/relay/turn_off',l:'OFF'}],
@@ -463,6 +522,8 @@ var COMPONENTS = [
      challenge:'Display the temperature and a smiley face!'},
  fr:{name:'Écran OLED',desc:'Un petit écran — texte, chiffres, pixel art !',
      challenge:'Affiche la température et un smiley !'},
+ ar:{name:'شاشة OLED',desc:'!شاشة صغيرة — نص، أرقام، رسومات بيكسل',
+     challenge:'!اعرض درجة الحرارة ووجه مبتسم'},
  pin:'GPIO6 (SDA) + GPIO7 (SCL)',
  yaml:'i2c:\n  sda: 6\n  scl: 7\n\ndisplay:\n  - platform: ssd1306_i2c\n    model: "SSD1306 128x64"\n    lambda: |-\n      it.printf(0, 0, id(font1), "Kids Lab!");\n\nfont:\n  - file: "gfonts://Roboto"\n    id: font1\n    size: 16',
  api:[],
@@ -475,6 +536,8 @@ var COMPONENTS = [
      challenge:'Build a weather station with OLED display!'},
  fr:{name:'Capteur DHT22',desc:'Il fait chaud ? Humide ? Ce capteur sait !',
      challenge:'Construis une station météo avec écran OLED !'},
+ ar:{name:'حسّاس DHT22',desc:'!حار؟ رطب؟ هالحسّاس يعرف',
+     challenge:'!اصنع محطة طقس مع شاشة OLED'},
  pin:'GPIO4',
  yaml:'sensor:\n  - platform: dht\n    pin: 4\n    model: DHT22\n    temperature:\n      name: "Temperature"\n    humidity:\n      name: "Humidity"\n    update_interval: 5s',
  api:[{m:'GET',p:'/sensor/temperature',l:'Temperature'},{m:'GET',p:'/sensor/humidity',l:'Humidity'}],
@@ -486,6 +549,8 @@ var COMPONENTS = [
      challenge:'Make NeoPixels change color based on light level!'},
  fr:{name:'Capteur de lumière (LDR)',desc:'Clair ou sombre ? Une résistance qui voit la lumière !',
      challenge:'Change la couleur des NeoPixels selon la lumière !'},
+ ar:{name:'حسّاس ضوء (LDR)',desc:'!فاتح ولا غامق؟ مقاومة تشوف الضوء',
+     challenge:'!غيّر لون NeoPixels حسب مستوى الضوء'},
  pin:'GPIO5',
  yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Light Level"\n    update_interval: 1s\n    attenuation: auto',
  api:[{m:'GET',p:'/sensor/light_level',l:'Light'}],
@@ -497,6 +562,8 @@ var COMPONENTS = [
      challenge:'Build a parking sensor that beeps faster when close!'},
  fr:{name:'Ultrasons (HC-SR04)',desc:'Mesure la distance avec des ondes sonores. Comme une chauve-souris !',
      challenge:'Fabrique un radar de recul qui bipe plus vite quand c\'est proche !'},
+ ar:{name:'موجات فوق صوتية (HC-SR04)',desc:'!يقيس المسافة بالموجات الصوتية. مثل الخفّاش',
+     challenge:'!اصنع رادار ركن يصفّر أسرع كل ما قرب'},
  pin:'GPIO6 (trig) + GPIO7 (echo)',
  yaml:'sensor:\n  - platform: ultrasonic\n    trigger_pin: 6\n    echo_pin: 7\n    name: "Distance"\n    update_interval: 0.5s',
  api:[{m:'GET',p:'/sensor/distance',l:'Distance'}],
@@ -508,6 +575,8 @@ var COMPONENTS = [
      challenge:'Flash red LEDs + buzzer when motion is detected!'},
  fr:{name:'Capteur PIR',desc:'Détecte les mouvements ! Fabrique une alarme !',
      challenge:'Fais clignoter les LEDs en rouge + buzzer quand il y a du mouvement !'},
+ ar:{name:'حسّاس حركة PIR',desc:'!يكتشف الحركة! اصنع إنذار دخيل',
+     challenge:'!خلّ الأضواء تومض أحمر + جرس لما يكتشف حركة'},
  pin:'GPIO10',
  yaml:'binary_sensor:\n  - platform: gpio\n    pin: 10\n    name: "Motion"\n    device_class: motion',
  api:[{m:'GET',p:'/binary_sensor/motion',l:'Motion'}],
@@ -519,6 +588,8 @@ var COMPONENTS = [
      challenge:'Auto-water your plant with a relay + pump!'},
  fr:{name:'Humidité du sol',desc:'Ta plante a soif ? Ce capteur te le dit !',
      challenge:'Arrose automatiquement avec un relais + pompe !'},
+ ar:{name:'رطوبة التربة',desc:'!نبتتك عطشانة؟ هالحسّاس يقولك',
+     challenge:'!اسقِ نبتتك تلقائياً مع ريلاي + مضخة'},
  pin:'GPIO5',
  yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Soil Moisture"\n    update_interval: 5s\n    attenuation: auto',
  api:[{m:'GET',p:'/sensor/soil_moisture',l:'Moisture'}],
@@ -531,6 +602,8 @@ var COMPONENTS = [
      challenge:'Count presses and show the score on OLED!'},
  fr:{name:'Bouton poussoir',desc:'Appuie ! L\'entrée la plus simple.',
      challenge:'Compte les pressions et affiche le score sur l\'OLED !'},
+ ar:{name:'زر ضغط',desc:'.اضغط! أبسط مدخل على الإطلاق',
+     challenge:'!عدّ الضغطات واعرض النتيجة على شاشة OLED'},
  pin:'GPIO9 (BOOT) / GPIO1 (external)',
  yaml:'binary_sensor:\n  - platform: gpio\n    pin:\n      number: 9\n      mode: INPUT_PULLUP\n      inverted: true\n    name: "Boot Button"\n\n  - platform: gpio\n    pin:\n      number: 1\n      mode: INPUT_PULLUP\n      inverted: true\n    name: "Push Button"',
  api:[{m:'GET',p:'/binary_sensor/boot_button',l:'Boot'},{m:'GET',p:'/binary_sensor/push_button',l:'Button'}],
@@ -542,6 +615,8 @@ var COMPONENTS = [
      challenge:'Build a secret touch-activated light!'},
  fr:{name:'Capteur tactile',desc:'Touche — pas besoin d\'appuyer ! Comme un écran.',
      challenge:'Fabrique une lumière secrète activée par le toucher !'},
+ ar:{name:'حسّاس لمس',desc:'.المسه — بدون ضغط! مثل شاشة الجوال',
+     challenge:'!اصنع ضوء سري يشتغل باللمس'},
  pin:'GPIO10',
  yaml:'binary_sensor:\n  - platform: gpio\n    pin: 10\n    name: "Touch"\n    device_class: moving',
  api:[{m:'GET',p:'/binary_sensor/touch',l:'Touch'}],
@@ -553,6 +628,8 @@ var COMPONENTS = [
      challenge:'Control NeoPixel brightness or servo angle with the knob!'},
  fr:{name:'Potentiomètre',desc:'Tourne le bouton pour changer une valeur !',
      challenge:'Contrôle la luminosité ou l\'angle du servo avec le bouton !'},
+ ar:{name:'مقاومة متغيرة',desc:'!لفّ المقبض لتغيير القيمة. تحكم بالصوت',
+     challenge:'!تحكم بسطوع NeoPixel أو زاوية السيرفو بالمقبض'},
  pin:'GPIO5',
  yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Potentiometer"\n    update_interval: 0.2s\n    attenuation: auto',
  api:[{m:'GET',p:'/sensor/potentiometer',l:'Pot'}],
@@ -565,6 +642,8 @@ var COMPONENTS = [
      challenge:'Read micro:bit sensors and show them on the OLED!'},
  fr:{name:'micro:bit UART',desc:'2 fils + GND. Simple, fiable, instantané !',
      challenge:'Lis les capteurs micro:bit et affiche-les sur l\'OLED !'},
+ ar:{name:'micro:bit سلكي',desc:'!سلكين + أرضي. بسيط، موثوق، فوري',
+     challenge:'!اقرأ حسّاسات micro:bit واعرضها على شاشة OLED'},
  pin:'GPIO20 (RX) + GPIO21 (TX)',
  yaml:'uart:\n  rx_pin: 20\n  tx_pin: 21\n  baud_rate: 115200\n  id: microbit_uart\n\n# micro:bit sends text lines over serial:\n#   T:23  L:142  P0:512  P1:0  P2:255  A:1  B:0\n# Parse with a custom text_sensor + lambda:\n\ntext_sensor:\n  - platform: custom\n    lambda: |-\n      auto s = new UARTTextSensor(id(microbit_uart));\n      App.register_component(s);\n      return {s};\n    text_sensors:\n      - name: "micro:bit Raw"\n        id: microbit_raw',
  api:[{m:'GET',p:'/text_sensor/microbit_raw',l:'Raw data'}],
@@ -577,6 +656,8 @@ var COMPONENTS = [
      challenge:'Connect 3 micro:bits at once — each one a different sensor station!'},
  fr:{name:'micro:bit BLE',desc:'Sans fil ! Aucun câble entre les cartes. P0, P1, P2 libres pour les capteurs !',
      challenge:'Connecte 3 micro:bits en même temps — chacun une station capteur !'},
+ ar:{name:'micro:bit لاسلكي',desc:'!لاسلكي! بدون أسلاك بين اللوحات. P0, P1, P2 كلها حرة للحسّاسات',
+     challenge:'!وصّل 3 micro:bits بنفس الوقت — كل واحد محطة حسّاسات مختلفة'},
  pin:'None! Wireless via BLE',
  yaml:'# ============================================================\n# BLE Gateway — connects to micro:bit NUS UART service\n# ============================================================\n# micro:bit runs bit-playground firmware (BLE UART)\n# and sends: T:23\\nL:142\\nP0:512\\nP1:340\\nP2:0\\nA:1\\nB:0\n#\n# Find your micro:bit MAC address with:\n#   esphome logs kids-lab.yaml\n#   (look for [ble_tracker] lines)\n\nesp32_ble_tracker:\n  scan_parameters:\n    active: true\n\nble_client:\n  - mac_address: "XX:XX:XX:XX:XX:XX"  # ← your micro:bit MAC\n    id: microbit1\n    on_connect:\n      then:\n        - lambda: |-\n            ESP_LOGI("ble", "micro:bit connected!");\n    on_disconnect:\n      then:\n        - lambda: |-\n            ESP_LOGW("ble", "micro:bit disconnected");\n\n# Read NUS TX characteristic (micro:bit → ESP32)\nsensor:\n  - platform: ble_client\n    type: characteristic\n    ble_client_id: microbit1\n    name: "micro:bit Raw"\n    service_uuid: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"\n    characteristic_uuid: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"\n    notify: true\n    # Parse with lambda to extract T, L, P0, P1, P2\n\n# To send commands TO micro:bit (ESP32 → micro:bit):\n# Write to NUS RX characteristic:\n#   service:  6E400001-B5A3-F393-E0A9-E50E24DCCA9E\n#   char:     6E400002-B5A3-F393-E0A9-E50E24DCCA9E',
  api:[{m:'GET',p:'/sensor/microbit_raw',l:'BLE data'}],
@@ -1129,8 +1210,13 @@ function setTheme(name){
 
 function setLang(l){
     lang = l;
-    document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent.trim()===l.toUpperCase());});
-    // Update all data-i18n elements
+    var isRtl = (l==='ar');
+    document.documentElement.setAttribute('dir', isRtl?'rtl':'ltr');
+    document.documentElement.setAttribute('lang', l);
+    document.querySelectorAll('.lang-btn').forEach(function(b){
+        var match = (l==='ar' && b.textContent.trim()==='عر') || (l!=='ar' && b.textContent.trim()===l.toUpperCase());
+        b.classList.toggle('active', match);
+    });
     document.querySelectorAll('[data-i18n]').forEach(function(el){
         var k = el.getAttribute('data-i18n');
         if(T[lang]&&T[lang][k]) el.textContent = T[lang][k];
