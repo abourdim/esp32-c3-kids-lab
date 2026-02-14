@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="stealth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Kids Lab — ESPHome Guide v1.3</title>
+<style>
+/* ============================================================
+   CSS VARIABLES — 4 themes from bit-playground
+   ============================================================ */
+:root {
+    --bg-color:#020617;--panel-bg:#020617;--card-bg:rgba(15,23,42,0.96);--card-border:rgba(148,163,184,0.3);
+    --accent:#22c55e;--accent-soft:rgba(34,197,94,0.15);--accent-strong:rgba(34,197,94,0.7);--accent2:#3b82f6;
+    --danger:#f97373;--muted:#9ca3af;--text:#f9fafb;--text-secondary:#e5e7eb;--border:#1f2937;
+    --pill-bg:rgba(15,23,42,0.9);--pill-border:rgba(148,163,184,0.6);--input-bg:rgba(15,23,42,0.6);
+    --glow1:rgba(34,197,94,0.18);--glow2:rgba(59,130,246,0.2);
+    --body-glow1:rgba(34,197,94,0.18);--body-glow2:rgba(59,130,246,0.2);
+    --btn-primary-bg:linear-gradient(135deg,#22c55e,#16a34a);--btn-primary-text:#fff;--btn-primary-border:rgba(34,197,94,0.8);
+    --connected-bg:rgba(34,197,94,0.25);--connected-border:rgba(34,197,94,0.9);--connected-text:#bbf7d0;--connected-dot:#22c55e;
+    --disconnected-bg:rgba(239,68,68,0.15);--disconnected-border:rgba(239,68,68,0.6);--disconnected-dot:#f97373;
+    --shadow-color:rgba(15,23,42,0.85);
+}
+[data-theme="neon"] {
+    --bg-color:#0a0a1a;--panel-bg:#0a0a1a;--card-bg:rgba(18,18,42,0.96);--card-border:rgba(100,100,255,0.25);
+    --accent:#00d4ff;--accent-soft:rgba(0,212,255,0.15);--accent-strong:rgba(0,212,255,0.7);--accent2:#ff00ff;
+    --danger:#ff3366;--muted:#8888bb;--text:#eeeeff;--text-secondary:#ccccee;--border:#1a1a3a;
+    --pill-bg:rgba(18,18,42,0.9);--pill-border:rgba(100,100,255,0.4);--input-bg:rgba(18,18,42,0.6);
+    --glow1:rgba(0,212,255,0.2);--glow2:rgba(255,0,255,0.15);--body-glow1:rgba(0,212,255,0.2);--body-glow2:rgba(255,0,255,0.15);
+    --btn-primary-bg:linear-gradient(135deg,#00d4ff,#0088ff);--btn-primary-text:#fff;--btn-primary-border:rgba(0,212,255,0.8);
+    --connected-bg:rgba(0,212,255,0.2);--connected-border:rgba(0,212,255,0.9);--connected-text:#99eeff;--connected-dot:#00d4ff;
+    --disconnected-bg:rgba(255,51,102,0.15);--disconnected-border:rgba(255,51,102,0.6);--disconnected-dot:#ff3366;
+    --shadow-color:rgba(10,10,26,0.9);
+}
+[data-theme="arctic"] {
+    --bg-color:#e8eef4;--panel-bg:#f0f4f8;--card-bg:rgba(255,255,255,0.95);--card-border:rgba(100,130,170,0.25);
+    --accent:#2563eb;--accent-soft:rgba(37,99,235,0.12);--accent-strong:rgba(37,99,235,0.6);--accent2:#06b6d4;
+    --danger:#dc2626;--muted:#64748b;--text:#1e293b;--text-secondary:#475569;--border:#cbd5e1;
+    --pill-bg:rgba(255,255,255,0.9);--pill-border:rgba(100,130,170,0.3);--input-bg:rgba(241,245,249,0.9);
+    --glow1:rgba(37,99,235,0.08);--glow2:rgba(6,182,212,0.06);--body-glow1:rgba(37,99,235,0.1);--body-glow2:rgba(6,182,212,0.08);
+    --btn-primary-bg:linear-gradient(135deg,#2563eb,#3b82f6);--btn-primary-text:#fff;--btn-primary-border:rgba(37,99,235,0.7);
+    --connected-bg:rgba(22,163,74,0.12);--connected-border:rgba(22,163,74,0.6);--connected-text:#15803d;--connected-dot:#22c55e;
+    --disconnected-bg:rgba(220,38,38,0.08);--disconnected-border:rgba(220,38,38,0.4);--disconnected-dot:#dc2626;
+    --shadow-color:rgba(100,116,139,0.15);
+}
+[data-theme="blaze"] {
+    --bg-color:#fdf2e9;--panel-bg:#fef7f0;--card-bg:rgba(255,255,255,0.95);--card-border:rgba(194,120,60,0.2);
+    --accent:#ea580c;--accent-soft:rgba(234,88,12,0.1);--accent-strong:rgba(234,88,12,0.6);--accent2:#dc2626;
+    --danger:#dc2626;--muted:#78716c;--text:#292524;--text-secondary:#57534e;--border:#e7e5e4;
+    --pill-bg:rgba(255,255,255,0.9);--pill-border:rgba(194,120,60,0.25);--input-bg:rgba(254,243,230,0.9);
+    --glow1:rgba(234,88,12,0.06);--glow2:rgba(220,38,38,0.04);--body-glow1:rgba(234,88,12,0.1);--body-glow2:rgba(250,204,21,0.08);
+    --btn-primary-bg:linear-gradient(135deg,#ea580c,#f97316);--btn-primary-text:#fff;--btn-primary-border:rgba(234,88,12,0.7);
+    --connected-bg:rgba(22,163,74,0.1);--connected-border:rgba(22,163,74,0.5);--connected-text:#15803d;--connected-dot:#22c55e;
+    --disconnected-bg:rgba(220,38,38,0.08);--disconnected-border:rgba(220,38,38,0.4);--disconnected-dot:#dc2626;
+    --shadow-color:rgba(120,113,108,0.12);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;min-height:100dvh;background:radial-gradient(circle at top left,var(--body-glow1),transparent 50%),radial-gradient(circle at bottom right,var(--body-glow2),transparent 55%),var(--bg-color);background-attachment:fixed;color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;overflow:hidden}
+a{color:var(--accent);text-decoration:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:9px}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:1280px;margin:0 auto;width:100%;overflow:hidden}
+
+/* Header */
+.header{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;border-bottom:1px solid var(--card-border);background:radial-gradient(circle at top left,var(--glow1),transparent 55%),radial-gradient(circle at bottom right,var(--glow2),transparent 60%),var(--panel-bg);flex-wrap:wrap}
+.title-block{display:flex;align-items:center;gap:10px}
+.site-logo{width:52px;height:auto;transition:transform .5s,filter .5s}
+.site-logo:hover{transform:rotate(12deg) scale(1.1);filter:drop-shadow(0 0 6px var(--accent))}
+.title-block h1{font-size:1.15rem;letter-spacing:.14em;text-transform:uppercase;background:linear-gradient(120deg,#f97316,#22c55e,#38bdf8);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 4s ease-in-out infinite;white-space:nowrap}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.title-block .subtitle{font-size:.74rem;color:var(--muted);letter-spacing:.08em}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* Theme buttons */
+.theme-group{display:flex;gap:5px;align-items:center}
+.theme-btn{width:30px;height:30px;border-radius:8px;border:2px solid transparent;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .25s;background:var(--pill-bg);padding:0}
+.theme-btn:hover{transform:scale(1.15);box-shadow:none}
+.theme-btn.active{border-color:var(--accent);box-shadow:0 0 12px var(--accent-soft)}
+.theme-btn[data-theme="stealth"]{background:#0f0f23}
+.theme-btn[data-theme="neon"]{background:linear-gradient(135deg,#00d4ff,#ff00ff)}
+.theme-btn[data-theme="arctic"]{background:linear-gradient(135deg,#e8eef4,#2563eb)}
+.theme-btn[data-theme="blaze"]{background:linear-gradient(135deg,#fef7f0,#ea580c)}
+
+/* Lang pills */
+.lang-group{display:flex;gap:4px}
+.lang-btn{padding:4px 8px;border-radius:999px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--text-secondary);font-size:.68rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.lang-btn.active{background:var(--connected-bg);border-color:var(--accent);color:var(--connected-text)}
+
+/* Connection chip */
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;border:1px solid var(--disconnected-border);padding:4px 10px;background:var(--disconnected-bg);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-secondary);cursor:pointer;transition:all .25s;font-weight:600;font-family:inherit}
+.chip.connected{border-color:var(--connected-border);background:var(--connected-bg);color:var(--connected-text);box-shadow:0 0 14px var(--accent-soft)}
+.chip-dot{width:7px;height:7px;border-radius:999px;background:var(--disconnected-dot);box-shadow:0 0 0 2px rgba(248,113,113,.4)}
+.chip.connected .chip-dot{background:var(--connected-dot);box-shadow:0 0 0 3px var(--accent-soft),0 0 14px var(--accent-strong);animation:dot-pulse 2s infinite}
+@keyframes dot-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ============================================================
+   LAYOUT — sidebar + main
+   ============================================================ */
+.layout{display:flex;flex:1;min-height:0;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:210px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--card-border);background:var(--panel-bg);padding:8px 0}
+.sidebar-cat{padding:10px 12px 4px;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:.8rem;color:var(--text-secondary);cursor:pointer;transition:all .12s;border-left:3px solid transparent;font-weight:500}
+.sidebar-item:hover{background:var(--accent-soft);color:var(--text)}
+.sidebar-item.active{background:var(--accent-soft);color:var(--connected-text);border-left-color:var(--accent);font-weight:700}
+.sidebar-item .si-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.sidebar-item .si-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-item .si-status{margin-left:auto;font-size:.6rem;padding:2px 5px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:700;display:none}
+.sidebar-item .si-status.live{display:inline-block}
+
+/* Sidebar divider */
+.sidebar-div{height:1px;background:var(--card-border);margin:6px 12px}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main{flex:1;overflow-y:auto;padding:20px 24px 40px;min-width:0}
+
+/* Guide page */
+.page-title{font-size:1.5rem;font-weight:800;letter-spacing:.02em;margin-bottom:2px}
+.page-tagline{font-size:.88rem;color:var(--muted);margin-bottom:16px;font-style:italic}
+
+/* Cards */
+.card{border-radius:14px;border:1px solid var(--card-border);background:var(--card-bg);padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .15s}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(15,23,42,.4),transparent 60%);mix-blend-mode:soft-light}
+.card:hover{border-color:var(--accent-soft);transform:translateY(-1px)}
+.card-title{font-size:.84rem;letter-spacing:.08em;font-weight:700;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.card-title .icon{font-size:1.05rem}
+.card-sub{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+
+/* Code blocks */
+.code-block{position:relative;margin:8px 0}
+.code-block pre{background:rgba(2,6,23,.8);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-family:"SF Mono",ui-monospace,Menlo,Monaco,Consolas,monospace;font-size:.76rem;line-height:1.5;overflow-x:auto;color:var(--text-secondary)}
+.code-block .copy-btn{position:absolute;top:6px;right:6px;padding:3px 8px;border-radius:6px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--muted);font-size:.65rem;cursor:pointer;font-family:inherit;transition:all .15s}
+.code-block .copy-btn:hover{color:var(--accent);border-color:var(--accent)}
+[data-theme="arctic"] .code-block pre,[data-theme="blaze"] .code-block pre{background:rgba(0,0,0,.05)}
+
+/* YAML syntax */
+.y-k{color:#22c55e}.y-v{color:#38bdf8}.y-c{color:#6b7280;font-style:italic}.y-s{color:#fbbf24}.y-n{color:#f97316}
+
+/* Buttons */
+.btn{border:none;border-radius:999px;padding:8px 14px;font-size:.78rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:var(--pill-bg);color:var(--text-secondary);border:1.5px solid var(--pill-border);transition:all .2s cubic-bezier(.34,1.56,.64,1);font-family:inherit;position:relative;overflow:hidden}
+.btn:hover:not(:disabled){transform:translateY(-2px) scale(1.03);filter:brightness(1.08)}
+.btn:active:not(:disabled){transform:translateY(0) scale(.97);transition-duration:.08s}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:var(--btn-primary-bg);color:var(--btn-primary-text);border-color:var(--btn-primary-border);box-shadow:0 4px 16px var(--accent-soft)}
+.btn.danger{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.5);color:#f97373}
+.btn.small{padding:5px 9px;font-size:.72rem}
+.btn-icon-only{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;font-size:1rem}
+
+/* Accordion */
+.acc{border-radius:10px;border:1px solid var(--card-border);margin-bottom:6px;overflow:hidden;background:var(--card-bg)}
+.acc-head{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;transition:background .15s}
+.acc-head:hover{background:var(--accent-soft)}
+.acc-arrow{transition:transform .2s;font-size:.7rem;color:var(--muted)}
+.acc.open .acc-arrow{transform:rotate(90deg)}
+.acc-body{display:none;padding:0 14px 12px;font-size:.82rem;line-height:1.6;color:var(--text-secondary)}
+.acc.open .acc-body{display:block}
+
+/* Test panel */
+.test-panel{border-radius:12px;border:1px solid var(--accent-soft);background:radial-gradient(circle at top left,var(--accent-soft),transparent 70%),var(--card-bg);padding:14px 16px;margin-bottom:12px}
+.test-panel.offline{opacity:.45;pointer-events:none}
+.test-panel .tp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.tp-status{font-size:.65rem;padding:3px 8px;border-radius:99px;font-weight:700;letter-spacing:.06em}
+.tp-status.live{background:var(--connected-bg);color:var(--connected-text);border:1px solid var(--connected-border)}
+.tp-status.off{background:var(--disconnected-bg);color:var(--danger);border:1px solid var(--disconnected-border)}
+
+/* Action buttons row */
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{padding:10px 20px;border-radius:12px;border:1.5px solid var(--pill-border);background:var(--pill-bg);color:var(--text);font-size:.9rem;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;font-family:inherit}
+.action-btn:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 4px 16px var(--accent-soft)}
+.action-btn:active{transform:scale(.96)}
+.action-btn.on{background:var(--btn-primary-bg);border-color:var(--btn-primary-border);color:#fff}
+
+/* Slider control */
+.slider-wrap{margin:8px 0}
+.slider-wrap label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:4px}
+.slider-row input[type="range"]{flex:1;height:6px;border-radius:3px;background:var(--border);-webkit-appearance:none;outline:none}
+.slider-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg-color);box-shadow:0 0 8px var(--accent-soft)}
+.slider-val{font-family:monospace;font-size:.82rem;color:var(--text);font-weight:700;min-width:40px;text-align:right}
+
+/* Monitor display */
+.monitor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.monitor-item{text-align:center;padding:12px 8px;border-radius:10px;background:rgba(15,23,42,.6);border:1px solid var(--border)}
+.monitor-icon{font-size:1.6rem;margin-bottom:4px}
+.monitor-val{font-size:1.5rem;font-weight:900;font-family:monospace;color:var(--text);line-height:1.1}
+.monitor-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;font-weight:600}
+.monitor-bar{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+.monitor-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .5s ease;width:0}
+[data-theme="arctic"] .monitor-item,[data-theme="blaze"] .monitor-item{background:rgba(0,0,0,.03)}
+
+/* Color grid */
+.color-dots{display:flex;gap:8px;flex-wrap:wrap}
+.color-dot{width:36px;height:36px;border-radius:10px;border:2px solid rgba(255,255,255,.1);cursor:pointer;transition:transform .12s,border-color .12s}
+.color-dot:hover{transform:scale(1.15);border-color:rgba(255,255,255,.4)}
+.color-dot:active{transform:scale(.95)}
+.color-dot.off{background:var(--border)!important;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--muted)}
+
+/* Wiring block */
+.wiring{font-family:monospace;font-size:.78rem;line-height:1.7;padding:10px 12px;border-radius:8px;background:rgba(2,6,23,.6);border:1px solid var(--border);color:var(--accent)}
+[data-theme="arctic"] .wiring,[data-theme="blaze"] .wiring{background:rgba(0,0,0,.04)}
+
+/* Steps list */
+.steps{counter-reset:step}
+.step{counter-increment:step;padding:8px 0 8px 36px;position:relative;font-size:.84rem;color:var(--text-secondary);line-height:1.6}
+.step::before{content:counter(step);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent-strong)}
+
+/* Hints */
+.hint-box{border-radius:10px;padding:10px 12px;margin:8px 0;border-left:3px solid;font-size:.82rem;line-height:1.5}
+.hint-box.tip{background:rgba(34,197,94,.06);border-color:#22c55e;color:var(--text-secondary)}
+.hint-box.warn{background:rgba(240,160,64,.06);border-color:#f0a040;color:var(--text-secondary)}
+.hint-box.danger{background:rgba(240,96,96,.06);border-color:#f06060;color:var(--text-secondary)}
+.hint-box strong{display:block;margin-bottom:2px;color:var(--text)}
+
+/* Stars */
+.stars{color:var(--accent);font-size:.7rem;letter-spacing:2px}
+
+/* OS Tabs */
+.os-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:8px 0 0}
+.os-tab{padding:6px 14px;font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.os-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.os-panel{display:none;padding:10px 0}
+.os-panel.active{display:block}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+.mobile-bar{display:none;flex-shrink:0;overflow-x:auto;border-bottom:1px solid var(--card-border);background:var(--panel-bg);padding:4px 8px;gap:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mobile-bar::-webkit-scrollbar{display:none}
+.mobile-pill{padding:6px 12px;border-radius:999px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--text-secondary);font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0}
+.mobile-pill.active{background:var(--connected-bg);border-color:var(--accent);color:var(--connected-text)}
+.menu-toggle{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--text);font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;font-family:inherit;padding:0}
+
+/* Connection overlay */
+.conn-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px}
+.conn-overlay.open{display:flex}
+.conn-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;width:100%;max-width:360px;text-align:center}
+.conn-card h3{font-size:1.1rem;margin-bottom:4px}
+.conn-card .sub{font-size:.8rem;color:var(--muted);margin-bottom:16px}
+.conn-card input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--card-border);background:var(--input-bg);color:var(--text);font-family:monospace;font-size:1rem;text-align:center;outline:none;margin-bottom:10px}
+.conn-card input:focus{border-color:var(--accent-strong);box-shadow:0 0 0 2px var(--accent-soft)}
+.conn-card .conn-btns{display:flex;gap:8px;justify-content:center}
+.conn-msg{font-size:.78rem;margin-top:10px;min-height:20px}
+.conn-msg.err{color:var(--danger)}
+.conn-msg.ok{color:var(--accent)}
+
+@media(max-width:768px){
+    .sidebar{display:none}
+    .mobile-bar{display:flex}
+    .menu-toggle{display:flex}
+    .main{padding:14px 12px 30px}
+    .page-title{font-size:1.2rem}
+    .title-block h1{font-size:.95rem!important;letter-spacing:.1em}
+    .title-block .subtitle{display:none}
+    .header{padding:8px 10px}
+    .theme-btn{width:26px;height:26px;font-size:.75rem}
+}
+@media(max-width:480px){
+    .action-btn{padding:8px 14px;font-size:.82rem}
+    .color-dot{width:30px;height:30px}
+    .monitor-grid{grid-template-columns:repeat(2,1fr)}
+    .header-right{gap:5px}
+}
+.ver{font-size:.55rem;color:var(--muted);opacity:.5;letter-spacing:.04em;font-weight:400;margin-left:6px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<div class="header">
+    <div class="title-block">
+        <button class="menu-toggle" onclick="toggleSidebar()" title="Menu">☰</button>
+        <svg class="site-logo" viewBox="-92.820084 179.975632 6 3.214096" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor" fill-rule="evenodd"><path d="M-90.269 180.707c0-.003-.012-.152-.024-.331-.012-.179-.023-.334-.024-.344l-.002-.018h.023c.012 0 .037-.002.055-.004.018-.002.049-.004.068-.005l.035-.002-.009.128c-.005.071-.01.139-.011.151l-.002.022.06-.098c.034-.053.078-.125.099-.158l.037-.06.036-.003c.02-.001.058-.004.086-.006.027-.002.058-.004.067-.003l.016.001-.112.169-.112.169.141.176c.078.096.141.177.141.178 0 .002-.002.003-.004.003-.017 0-.197.012-.202.014-.004.001-.035-.035-.11-.132-.057-.073-.105-.133-.107-.132-.002.001-.009.012-.015.023l-.012.021.008.115c.006.085.007.116.004.118-.006.003-.043.007-.117.01-.047.002-.057.001-.059-.004z"/><path d="M-89.191 180.769c-.077-.016-.12-.029-.169-.052-.034-.017-.112-.066-.121-.077-.004-.005-.002-.012.035-.147.006-.023.018-.02.042.01.054.069.137.12.215.133.036.006.039.006.06 0 .036-.012.054-.038.047-.07-.004-.022-.04-.051-.101-.083-.072-.038-.094-.052-.127-.083a.2.2 0 00-.057-.182c.017-.082.068-.133.159-.158.039-.01.108-.011.154-.001.073.016.147.047.21.088.033.022.036.025.034.034-.001.005-.011.04-.021.078-.018.065-.019.067-.028.066-.005 0-.013-.006-.017-.012-.011-.016-.058-.06-.077-.074a.27.27 0 00-.162-.054c-.053.005-.083.042-.064.081.009.019.033.036.098.071.104.055.155.098.178.149.013.028.016.08.007.117-.028.108-.117.171-.242.17-.02 0-.045-.002-.055-.004z"/><path d="M-91.104 180.904c-.031-.069-.095-.212-.142-.318-.048-.106-.086-.194-.086-.194.002-.002.083-.039.197-.089.054-.024.113-.048.131-.054.08-.025.155-.014.204.031.024.021.042.051.057.094a.24.24 0 01-.01.071c-.001.031-.003.042-.011.064-.012.03-.031.065-.039.072-.003.003-.006.006-.006.008 0 .003.036.023.205.11.061.032.115.06.119.063.009.006.005.008-.085.048-.052.023-.098.042-.103.043-.004 0-.07-.034-.146-.075l-.138-.075-.026.012-.027.012.049.112.049.117c.001.004-.025.017-.078.04-.042.02-.079.035-.081.035s-.027-.056-.058-.125zm.11-.318c.066-.032.091-.059.091-.1a.08.08 0 00-.05-.09c-.029-.012-.052-.007-.121.023l-.041.019c-.002.001.073.169.075.169 0 0 .02-.01.046-.02z"/><path d="M-88.329 181.181l-.071-.05c-.001 0 .037-.058.085-.128l.085-.129c-.003-.003-.135.089-.172.114l-.018-.012-.087.126c-.047.069-.088.125-.09.126-.004 0-.146.097-.146.099 0 .001.179.261.36.521.02.029.037.053.039.053.002.001.113-.074.146-.098-.001 0-.03-.046-.069-.101-.039-.056-.071-.103-.072-.106-.001-.003.033-.028.091-.069.051-.035.094-.064.096-.065.002 0 .036-.045.075-.102.039-.056.073-.103.074-.103.005 0 .145.097.145.1 0 .006-.395.573-.399.573-.002 0-.035-.022-.073-.048z"/><path d="M-91.754 181.531c-.135-.019-.289-.164-.329-.309a.33.33 0 01.002-.153c.032-.111.146-.223.256-.252.04-.01.121-.01.161.002.061.017.123.056.18.113.054.053.09.108.11.166a.43.43 0 01.014.082.34.34 0 01-.018.122c-.024.062-.088.138-.152.18-.068.046-.139.062-.224.049zm.149-.168c.06-.027.093-.094.079-.157-.022-.095-.136-.21-.234-.233-.045-.011-.086 0-.124.033-.02.018-.04.054-.043.081-.008.057.027.129.095.197.081.081.162.109.227.08z"/><path d="M-90.371 181.625a.09.09 0 01-.046-.076c-.058-.128-.058-.128-.072-.131a2.7 2.7 0 00-.12 0l-.007.015c-.012.021-.048.054-.071.065a.14.14 0 01-.182-.032.19.19 0 01-.032-.075.22.22 0 01.013-.06.18.18 0 01.074-.074c.023-.011.03-.012.061-.012.062 0 .105.021.137.069l.018.025.139.002.14.001.019-.01c.018-.009.02-.012.042-.054.012-.024.041-.086.063-.137a.93.93 0 01.067-.107c-.012-.018-.058-.017-.113-.013-.006.004-.006.005-.001.019.003.008.02.046.037.084.017.039.043.096.058.128.028.064.046.088.07.093.007.001.075.004.15.005l.137.002.013.02a.17.17 0 00.066.058c.017.008.025.01.066.01.046 0 .048 0 .074-.014z"/><path d="M-92.152 182.549l-.105-.011-.108-.012c-.029-.003-.078-.009-.107-.011l-.108-.011c-.029-.003-.068-.008-.097-.011-.028-.003-.076-.008-.104-.012-.029-.003-.053-.006-.054-.007-.001-.002.012-.04.029-.085.029-.077.031-.082.041-.083.006-.001.037.003.07.008.032.005.084.013.113.018l.076.012.076.012c.018.003.052.008.072.011.018.003.033.005.034.005 0 0-.087.06-.193.134-.107.073-.195.133-.196.135-.001.001.01.038.027.082l.03.078.019-.001c.011 0 .042-.003.07-.006.028-.003.073-.009.1-.013.028-.003.062-.008.076-.009.022-.003.049-.007.154-.019.018-.003.037-.004.042-.004.006 0-.061.045-.186.125-.108.068-.197.125-.198.127-.004.003.055.169.06.167.004 0 .028-.003.275-.028.03-.003.073-.008.095-.01.023-.002.044-.005.049-.006.007-.002.007-.002.002.004-.003.003-.083.059-.176.123-.094.064-.173.119-.175.121-.007.007.059.185.068.184.004 0 .027-.003.053-.005z"/><path d="M-87.128 182.564a.17.17 0 01-.053-.027.46.46 0 01-.12-.198c-.008-.034-.016-.062-.016-.062s-.017.003-.037.008c-.12.03-.18.044-.182.042-.004-.002.037-.167.04-.169.001-.001.052-.014.114-.03.066-.015.17-.04.236-.057.066-.016.165-.041.221-.055.056-.014.105-.025.108-.024.005.001-.003.028-.026.123-.043.171-.047.193-.047.24 0 .111.053.18.16.21.042.011.112.011.149-.002zm.099-.175a.08.08 0 00.062-.087c0-.023-.013-.091-.019-.103-.002-.003-.032.003-.098.019l-.098.026c-.003.003.016.074.026.095.012.025.034.047.056.054.02.006.04.005.071-.004z"/><path d="M-90.937 182.607a.22.22 0 01-.074-.075.19.19 0 01-.01-.059c0-.034.001-.039.013-.063a.2.2 0 01.074-.074c.024-.011.029-.012.07-.012.042 0 .046 0 .067.011a.2.2 0 01.073.064l.013.02.115.001c.079 0 .117-.002.12-.005.002-.002.026-.051.051-.108l.048-.104h.049c.026 0 .053.001.058.003.01.004.01.004.005.018l-.037.084-.037.084c-.014.038-.04.096-.054.128-.029.064-.047.088-.071.092l-.15.005-.137.002-.013.02c-.016.025-.04.047-.066.059-.017.008-.025.01-.066.01-.046 0-.048 0-.074-.014z"/><path d="M-89.824 182.831h-.002v-.087h2.998v.089h-2.998z"/><path d="M-90.825 182.969v-.043h3.997v.086h-3.997z"/><path d="M-92.82 183.147v-.043h5.992v.086h-5.992z"/></g></svg>
+        <div>
+            <h1 data-i18n="title">ESP32-C3 KIDS LAB</h1>
+            <div class="subtitle"><span data-i18n="subtitle">Play • Learn • Create</span> <span class="ver">v1.3 · 2026-02-14</span></div>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="theme-group">
+            <button class="theme-btn active" data-theme="stealth" onclick="setTheme('stealth')" title="Stealth">🌙</button>
+            <button class="theme-btn" data-theme="neon" onclick="setTheme('neon')" title="Neon">⚡</button>
+            <button class="theme-btn" data-theme="arctic" onclick="setTheme('arctic')" title="Arctic">☁️</button>
+            <button class="theme-btn" data-theme="blaze" onclick="setTheme('blaze')" title="Blaze">🔥</button>
+        </div>
+        <div class="lang-group">
+            <button class="lang-btn active" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('fr')">FR</button>
+        </div>
+        <button class="chip" id="connChip" onclick="openConn()">
+            <span class="chip-dot"></span>
+            <span id="connLabel" data-i18n="offline">OFFLINE</span>
+        </button>
+    </div>
+</div>
+
+<!-- Mobile nav bar -->
+<div class="mobile-bar" id="mobileBar"></div>
+
+<!-- Connection overlay -->
+<div class="conn-overlay" id="connOverlay">
+    <div class="conn-card">
+        <h3>📡 <span data-i18n="conn_title">Connect to ESP32</span></h3>
+        <div class="sub" data-i18n="conn_sub">Enter the IP address of your ESP32-C3</div>
+        <input type="text" id="connIP" value="192.168.4.1" spellcheck="false" autocomplete="off">
+        <div class="conn-btns">
+            <button class="btn primary" onclick="doConnect()" data-i18n="conn_go">Connect</button>
+            <button class="btn" onclick="closeConn()" data-i18n="conn_cancel">Cancel</button>
+        </div>
+        <div class="conn-msg" id="connMsg"></div>
+    </div>
+</div>
+
+<!-- ============================================================
+     LAYOUT: sidebar + main
+     ============================================================ -->
+<div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main" id="mainContent"></main>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ============================================================
+// TRANSLATIONS
+// ============================================================
+var T = {
+en: {
+    title:'ESP32-C3 KIDS LAB', subtitle:'Play • Learn • Create',
+    offline:'OFFLINE', ready:'READY!', conn_title:'Connect to ESP32',
+    conn_sub:'Enter the IP address of your ESP32-C3', conn_go:'Connect', conn_cancel:'Cancel',
+    // Sidebar categories
+    cat_guide:'Guide', cat_microbit:'micro:bit', cat_output:'Output', cat_sensor:'Sensors', cat_input:'Input', cat_extra:'More',
+    // Guide pages
+    nav_home:'Home', nav_setup:'Setup', nav_yaml:'YAML Config', nav_flash:'Build & Flash',
+    nav_api:'REST API', nav_test:'Test', nav_fix:'Troubleshoot', nav_help:'Help',
+    // Fun taglines
+    tag_home:"Your ESP32 adventure starts here!",
+    tag_setup:"Level 1: Gear Up!",
+    tag_yaml:"No code? YAML goes brrrr",
+    tag_flash:"Brain transplant in progress 🧠",
+    tag_api:"Your ESP32 now has a website. Flex.",
+    tag_test:"SMASH that LED button!",
+    tag_fix:"It's not a bug, it's a feature... jk",
+    tag_help:"Even pros Google stuff.",
+    // Component labels
+    try_it:'Test It!', wiring:'Wiring', yaml:'ESPHome YAML', api_ref:'REST API',
+    challenge:'Try This!', not_installed:'Add YAML to enable',
+    on:'ON', off:'OFF', stop:'STOP', play:'PLAY',
+    // Misc
+    copy:'Copy', copied:'Copied!', brightness:'Brightness', angle:'Angle',
+    pin:'Pin', difficulty:'Difficulty',
+    win:'Windows', lin:'Linux',
+    // Steps
+    step1:'Install ESPHome', step1d:'Open a terminal and run:', 
+    step2:'Plug in your board', step2d:'USB-C data cable → ESP32-C3 SuperMini',
+    step3:'Flash!', step3d:'From your project folder:',
+},
+fr: {
+    title:'ESP32-C3 KIDS LAB', subtitle:'Joue • Apprends • Crée',
+    offline:'HORS LIGNE', ready:'PRÊT !', conn_title:'Connexion ESP32',
+    conn_sub:"Entre l'adresse IP de ton ESP32-C3", conn_go:'Connecter', conn_cancel:'Annuler',
+    cat_guide:'Guide', cat_microbit:'micro:bit', cat_output:'Sortie', cat_sensor:'Capteurs', cat_input:'Entrée', cat_extra:'Plus',
+    nav_home:'Accueil', nav_setup:'Installation', nav_yaml:'Config YAML', nav_flash:'Compiler & Flasher',
+    nav_api:'API REST', nav_test:'Tester', nav_fix:'Dépannage', nav_help:'Aide',
+    tag_home:"L'aventure ESP32 commence ici !",
+    tag_setup:"Niveau 1 : Prépare ton arsenal !",
+    tag_yaml:"Pas de code ? YAML fait brrr",
+    tag_flash:"Greffe de cerveau en cours 🧠",
+    tag_api:"Ton ESP32 a un site web. La classe.",
+    tag_test:"ÉCRASE ce bouton LED !",
+    tag_fix:"C'est pas un bug, c'est une feature... lol",
+    tag_help:"Même les pros cherchent sur Google.",
+    try_it:'Teste !', wiring:'Câblage', yaml:'YAML ESPHome', api_ref:'API REST',
+    challenge:'Essaie ça !', not_installed:'Ajoute le YAML pour activer',
+    on:'ON', off:'OFF', stop:'STOP', play:'JOUER',
+    copy:'Copier', copied:'Copié !', brightness:'Luminosité', angle:'Angle',
+    pin:'Broche', difficulty:'Difficulté',
+    win:'Windows', lin:'Linux',
+    step1:'Installer ESPHome', step1d:'Ouvre un terminal et lance :',
+    step2:'Branche ta carte', step2d:'Câble USB-C données → ESP32-C3 SuperMini',
+    step3:'Flash !', step3d:'Depuis ton dossier projet :',
+}
+};
+var lang = 'en';
+function t(k){ return (T[lang]&&T[lang][k]) || (T.en[k]) || k; }
+
+// ============================================================
+// COMPONENTS DATA (16 core)
+// ============================================================
+var COMPONENTS = [
+// OUTPUT
+{id:'led',icon:'💡',cat:'output',stars:1,tpl:'action',entity:'light-onboard_led',
+ en:{name:'Onboard LED',desc:'The blue light on your board. No wires needed!',
+     challenge:'Make it blink 3 times when you press the BOOT button!'},
+ fr:{name:'LED intégrée',desc:'La lumière bleue sur ta carte. Aucun fil !',
+     challenge:'Fais-la clignoter 3 fois quand tu appuies sur BOOT !'},
+ pin:'GPIO8 (inverted)',
+ yaml:'light:\n  - platform: binary\n    name: "Onboard LED"\n    output: onboard_led_output\n\noutput:\n  - platform: gpio\n    pin:\n      number: 8\n      inverted: true\n    id: onboard_led_output',
+ api:[{m:'POST',p:'/light/onboard_led/turn_on',l:'ON'},{m:'POST',p:'/light/onboard_led/turn_off',l:'OFF'}],
+ wiring:'No wiring needed! Built into the board.',
+ actions:[{label:'on',icon:'💡',cls:'on',ep:'/light/onboard_led/turn_on'},{label:'off',icon:'⬛',cls:'',ep:'/light/onboard_led/turn_off'}]
+},
+{id:'neopixel',icon:'✨',cat:'output',stars:2,tpl:'color',entity:'light-neopixels',
+ en:{name:'NeoPixel Strip',desc:'Magic LEDs — each pixel a different color!',
+     challenge:'Make a rainbow nightlight that turns on when the room gets dark!'},
+ fr:{name:'Ruban NeoPixel',desc:'LEDs magiques — chaque pixel une couleur différente !',
+     challenge:'Fabrique une veilleuse arc-en-ciel qui s\'allume dans le noir !'},
+ pin:'GPIO3',
+ yaml:'light:\n  - platform: neopixelbus\n    type: GRB\n    variant: WS2812\n    pin: 3\n    num_leds: 8\n    name: "NeoPixels"\n    effects:\n      - addressable_rainbow:\n          name: "Rainbow"\n      - pulse:\n          name: "Pulse"',
+ api:[{m:'POST',p:'/light/neopixels/turn_on?r=255&g=0&b=0',l:'Red'},{m:'POST',p:'/light/neopixels/turn_on?effect=Rainbow',l:'Rainbow'},{m:'POST',p:'/light/neopixels/turn_off',l:'OFF'}],
+ wiring:'GPIO3 → DIN  ·  5V → VCC  ·  GND → GND',
+ colors:[[255,0,0],[255,136,0],[255,255,0],[0,255,0],[0,255,255],[0,100,255],[136,0,255],[255,0,255],[255,255,255]],
+ effects:['Rainbow','Pulse','Color Wipe','Strobe']
+},
+{id:'buzzer',icon:'🔔',cat:'output',stars:1,tpl:'action',entity:'button-play_beep',
+ en:{name:'Passive Buzzer',desc:'Play melodies like Mario & Star Wars!',
+     challenge:'Add your own RTTTL melody — find one online and paste it in!'},
+ fr:{name:'Buzzer passif',desc:'Joue des mélodies comme Mario & Star Wars !',
+     challenge:'Ajoute ta propre mélodie RTTTL — trouve-en une en ligne !'},
+ pin:'GPIO2',
+ yaml:'output:\n  - platform: ledc\n    pin: 2\n    id: buzzer_output\n\nrtttl:\n  output: buzzer_output\n  id: buzzer\n\nbutton:\n  - platform: template\n    name: "Play Mario"\n    on_press:\n      - rtttl.play: "mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6"',
+ api:[{m:'POST',p:'/button/play_mario/press',l:'Mario'},{m:'POST',p:'/button/play_beep/press',l:'Beep'},{m:'POST',p:'/button/stop_buzzer/press',l:'Stop'}],
+ wiring:'GPIO2 → Signal  ·  GND → GND',
+ actions:[{label:'🍄 Mario',cls:'',ep:'/button/play_mario/press'},{label:'⭐ Star Wars',cls:'',ep:'/button/play_starwars/press'},{label:'🔔 Beep',cls:'',ep:'/button/play_beep/press'},{label:'🔇 Stop',cls:'danger',ep:'/button/stop_buzzer/press'}]
+},
+{id:'servo',icon:'⚙️',cat:'output',stars:2,tpl:'slider',entity:'number-servo_angle',
+ en:{name:'Servo Motor',desc:'Turns to the exact angle you tell it. Robot arms!',
+     challenge:'Build a barrier gate that opens when motion is detected!'},
+ fr:{name:'Servomoteur',desc:'Tourne à l\'angle exact que tu veux. Bras de robot !',
+     challenge:'Construis une barrière qui s\'ouvre quand un mouvement est détecté !'},
+ pin:'GPIO0',
+ yaml:'output:\n  - platform: ledc\n    pin: 0\n    id: servo_output\n    frequency: 50 Hz\n\nservo:\n  - id: my_servo\n    output: servo_output\n\nnumber:\n  - platform: template\n    name: "Servo Angle"\n    min_value: -100\n    max_value: 100\n    step: 1\n    optimistic: true\n    set_action:\n      - servo.write:\n          id: my_servo\n          level: !lambda "return x / 100.0;"',
+ api:[{m:'POST',p:'/number/servo_angle/set?value=0',l:'Center'},{m:'POST',p:'/number/servo_angle/set?value=-100',l:'-100'},{m:'POST',p:'/number/servo_angle/set?value=100',l:'100'}],
+ wiring:'GPIO0 → Signal (orange)  ·  5V → VCC (red)  ·  GND → GND (brown)',
+ slider:{min:-100,max:100,ep:'/number/servo_angle/set?value=',unit:'°',presets:[{v:-100,l:'◀ -100'},{v:0,l:'Center'},{v:100,l:'100 ▶'}]}
+},
+{id:'relay',icon:'🔌',cat:'output',stars:2,tpl:'action',entity:'switch-relay',
+ en:{name:'Relay Module',desc:'A switch for BIG things — lamps, fans. Click!',
+     challenge:'Make a smart lamp that turns on at sunset (use LDR)!'},
+ fr:{name:'Module relais',desc:'Un interrupteur pour les GROS trucs — lampes, ventilateurs !',
+     challenge:'Fabrique une lampe intelligente qui s\'allume au coucher du soleil !'},
+ pin:'GPIO7',
+ yaml:'switch:\n  - platform: gpio\n    pin: 7\n    name: "Relay"\n    id: relay',
+ api:[{m:'POST',p:'/switch/relay/turn_on',l:'ON'},{m:'POST',p:'/switch/relay/turn_off',l:'OFF'}],
+ wiring:'GPIO7 → IN  ·  3.3V → VCC  ·  GND → GND',
+ actions:[{label:'on',icon:'⚡',cls:'on',ep:'/switch/relay/turn_on'},{label:'off',icon:'⬛',cls:'',ep:'/switch/relay/turn_off'}]
+},
+{id:'oled',icon:'🖥️',cat:'output',stars:2,tpl:'action',entity:'',
+ en:{name:'OLED Display',desc:'A tiny screen — show text, numbers, pixel art!',
+     challenge:'Display the temperature and a smiley face!'},
+ fr:{name:'Écran OLED',desc:'Un petit écran — texte, chiffres, pixel art !',
+     challenge:'Affiche la température et un smiley !'},
+ pin:'GPIO6 (SDA) + GPIO7 (SCL)',
+ yaml:'i2c:\n  sda: 6\n  scl: 7\n\ndisplay:\n  - platform: ssd1306_i2c\n    model: "SSD1306 128x64"\n    lambda: |-\n      it.printf(0, 0, id(font1), "Kids Lab!");\n\nfont:\n  - file: "gfonts://Roboto"\n    id: font1\n    size: 16',
+ api:[],
+ wiring:'GPIO6 → SDA  ·  GPIO7 → SCL  ·  3.3V → VCC  ·  GND → GND',
+ actions:[]
+},
+// SENSORS
+{id:'dht22',icon:'🌡️',cat:'sensor',stars:1,tpl:'monitor',entity:'sensor-temperature',
+ en:{name:'DHT22 Sensor',desc:'Is it hot? Is it humid? This sensor knows!',
+     challenge:'Build a weather station with OLED display!'},
+ fr:{name:'Capteur DHT22',desc:'Il fait chaud ? Humide ? Ce capteur sait !',
+     challenge:'Construis une station météo avec écran OLED !'},
+ pin:'GPIO4',
+ yaml:'sensor:\n  - platform: dht\n    pin: 4\n    model: DHT22\n    temperature:\n      name: "Temperature"\n    humidity:\n      name: "Humidity"\n    update_interval: 5s',
+ api:[{m:'GET',p:'/sensor/temperature',l:'Temperature'},{m:'GET',p:'/sensor/humidity',l:'Humidity'}],
+ wiring:'GPIO4 → DATA  ·  3.3V → VCC  ·  GND → GND  ·  10kΩ pullup (DATA↔VCC)',
+ monitors:[{id:'sensor-temperature',icon:'🌡️',label:'Temp',unit:'°C',max:50},{id:'sensor-humidity',icon:'💧',label:'Humidity',unit:'%',max:100}]
+},
+{id:'ldr',icon:'☀️',cat:'sensor',stars:1,tpl:'monitor',entity:'sensor-light_level',
+ en:{name:'Light Sensor (LDR)',desc:'Bright or dark? A resistor that sees light!',
+     challenge:'Make NeoPixels change color based on light level!'},
+ fr:{name:'Capteur de lumière (LDR)',desc:'Clair ou sombre ? Une résistance qui voit la lumière !',
+     challenge:'Change la couleur des NeoPixels selon la lumière !'},
+ pin:'GPIO5',
+ yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Light Level"\n    update_interval: 1s\n    attenuation: auto',
+ api:[{m:'GET',p:'/sensor/light_level',l:'Light'}],
+ wiring:'GPIO5 → LDR junction  ·  LDR → 3.3V  ·  10kΩ → GND (voltage divider)',
+ monitors:[{id:'sensor-light_level',icon:'☀️',label:'Light',unit:'V',max:3.3}]
+},
+{id:'ultrasonic',icon:'📏',cat:'sensor',stars:2,tpl:'monitor',entity:'sensor-distance',
+ en:{name:'Ultrasonic (HC-SR04)',desc:'Measures distance with sound waves. Like a bat!',
+     challenge:'Build a parking sensor that beeps faster when close!'},
+ fr:{name:'Ultrasons (HC-SR04)',desc:'Mesure la distance avec des ondes sonores. Comme une chauve-souris !',
+     challenge:'Fabrique un radar de recul qui bipe plus vite quand c\'est proche !'},
+ pin:'GPIO6 (trig) + GPIO7 (echo)',
+ yaml:'sensor:\n  - platform: ultrasonic\n    trigger_pin: 6\n    echo_pin: 7\n    name: "Distance"\n    update_interval: 0.5s',
+ api:[{m:'GET',p:'/sensor/distance',l:'Distance'}],
+ wiring:'GPIO6 → TRIG  ·  GPIO7 → ECHO  ·  5V → VCC  ·  GND → GND',
+ monitors:[{id:'sensor-distance',icon:'📏',label:'Distance',unit:'m',max:4}]
+},
+{id:'pir',icon:'🚶',cat:'sensor',stars:1,tpl:'monitor',entity:'binary_sensor-motion',
+ en:{name:'PIR Motion Sensor',desc:'Detects movement! Build an intruder alarm!',
+     challenge:'Flash red LEDs + buzzer when motion is detected!'},
+ fr:{name:'Capteur PIR',desc:'Détecte les mouvements ! Fabrique une alarme !',
+     challenge:'Fais clignoter les LEDs en rouge + buzzer quand il y a du mouvement !'},
+ pin:'GPIO10',
+ yaml:'binary_sensor:\n  - platform: gpio\n    pin: 10\n    name: "Motion"\n    device_class: motion',
+ api:[{m:'GET',p:'/binary_sensor/motion',l:'Motion'}],
+ wiring:'GPIO10 → OUT  ·  3.3V → VCC  ·  GND → GND',
+ monitors:[{id:'binary_sensor-motion',icon:'🚶',label:'Motion',unit:'',max:1,binary:true}]
+},
+{id:'soil',icon:'🌱',cat:'sensor',stars:1,tpl:'monitor',entity:'sensor-soil_moisture',
+ en:{name:'Soil Moisture',desc:'Is your plant thirsty? This sensor tells you!',
+     challenge:'Auto-water your plant with a relay + pump!'},
+ fr:{name:'Humidité du sol',desc:'Ta plante a soif ? Ce capteur te le dit !',
+     challenge:'Arrose automatiquement avec un relais + pompe !'},
+ pin:'GPIO5',
+ yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Soil Moisture"\n    update_interval: 5s\n    attenuation: auto',
+ api:[{m:'GET',p:'/sensor/soil_moisture',l:'Moisture'}],
+ wiring:'GPIO5 → AO  ·  3.3V → VCC  ·  GND → GND',
+ monitors:[{id:'sensor-soil_moisture',icon:'🌱',label:'Moisture',unit:'V',max:3.3}]
+},
+// INPUT
+{id:'button',icon:'🔘',cat:'input',stars:1,tpl:'monitor',entity:'binary_sensor-boot_button',
+ en:{name:'Push Button',desc:'Press it! The simplest input ever.',
+     challenge:'Count presses and show the score on OLED!'},
+ fr:{name:'Bouton poussoir',desc:'Appuie ! L\'entrée la plus simple.',
+     challenge:'Compte les pressions et affiche le score sur l\'OLED !'},
+ pin:'GPIO9 (BOOT) / GPIO1 (external)',
+ yaml:'binary_sensor:\n  - platform: gpio\n    pin:\n      number: 9\n      mode: INPUT_PULLUP\n      inverted: true\n    name: "Boot Button"\n\n  - platform: gpio\n    pin:\n      number: 1\n      mode: INPUT_PULLUP\n      inverted: true\n    name: "Push Button"',
+ api:[{m:'GET',p:'/binary_sensor/boot_button',l:'Boot'},{m:'GET',p:'/binary_sensor/push_button',l:'Button'}],
+ wiring:'BOOT: built-in (GPIO9)\nExternal: GPIO1 → one leg  ·  GND → other leg',
+ monitors:[{id:'binary_sensor-boot_button',icon:'⏏️',label:'BOOT',unit:'',max:1,binary:true},{id:'binary_sensor-push_button',icon:'🔘',label:'Button',unit:'',max:1,binary:true}]
+},
+{id:'touch',icon:'👆',cat:'input',stars:1,tpl:'monitor',entity:'binary_sensor-touch',
+ en:{name:'Touch Sensor',desc:'Touch it — no press needed! Like a phone screen.',
+     challenge:'Build a secret touch-activated light!'},
+ fr:{name:'Capteur tactile',desc:'Touche — pas besoin d\'appuyer ! Comme un écran.',
+     challenge:'Fabrique une lumière secrète activée par le toucher !'},
+ pin:'GPIO10',
+ yaml:'binary_sensor:\n  - platform: gpio\n    pin: 10\n    name: "Touch"\n    device_class: moving',
+ api:[{m:'GET',p:'/binary_sensor/touch',l:'Touch'}],
+ wiring:'GPIO10 → SIG  ·  3.3V → VCC  ·  GND → GND',
+ monitors:[{id:'binary_sensor-touch',icon:'👆',label:'Touch',unit:'',max:1,binary:true}]
+},
+{id:'pot',icon:'🎛️',cat:'input',stars:1,tpl:'monitor',entity:'sensor-potentiometer',
+ en:{name:'Potentiometer',desc:'Turn the knob to change a value. Volume control!',
+     challenge:'Control NeoPixel brightness or servo angle with the knob!'},
+ fr:{name:'Potentiomètre',desc:'Tourne le bouton pour changer une valeur !',
+     challenge:'Contrôle la luminosité ou l\'angle du servo avec le bouton !'},
+ pin:'GPIO5',
+ yaml:'sensor:\n  - platform: adc\n    pin: 5\n    name: "Potentiometer"\n    update_interval: 0.2s\n    attenuation: auto',
+ api:[{m:'GET',p:'/sensor/potentiometer',l:'Pot'}],
+ wiring:'GPIO5 → Middle pin  ·  3.3V → Left pin  ·  GND → Right pin',
+ monitors:[{id:'sensor-potentiometer',icon:'🎛️',label:'Value',unit:'V',max:3.3}]
+},
+// MICRO:BIT — UART (wired)
+{id:'microbit-uart',icon:'🔌',cat:'microbit',stars:1,tpl:'monitor',entity:'sensor-microbit_temperature',
+ en:{name:'micro:bit UART',desc:'2 wires + GND. Simple, reliable, instant!',
+     challenge:'Read micro:bit sensors and show them on the OLED!'},
+ fr:{name:'micro:bit UART',desc:'2 fils + GND. Simple, fiable, instantané !',
+     challenge:'Lis les capteurs micro:bit et affiche-les sur l\'OLED !'},
+ pin:'GPIO20 (RX) + GPIO21 (TX)',
+ yaml:'uart:\n  rx_pin: 20\n  tx_pin: 21\n  baud_rate: 115200\n  id: microbit_uart\n\n# micro:bit sends text lines over serial:\n#   T:23  L:142  P0:512  P1:0  P2:255  A:1  B:0\n# Parse with a custom text_sensor + lambda:\n\ntext_sensor:\n  - platform: custom\n    lambda: |-\n      auto s = new UARTTextSensor(id(microbit_uart));\n      App.register_component(s);\n      return {s};\n    text_sensors:\n      - name: "micro:bit Raw"\n        id: microbit_raw',
+ api:[{m:'GET',p:'/text_sensor/microbit_raw',l:'Raw data'}],
+ wiring:'micro:bit Pin 0 (TX) → ESP32 GPIO20 (RX)\nmicro:bit Pin 1 (RX) → ESP32 GPIO21 (TX)\nmicro:bit GND → ESP32 GND\n\n⚠️ Uses P0 & P1 for serial!\n   P2 stays free for sensors.',
+ monitors:[{id:'sensor-microbit_temperature',icon:'🌡️',label:'Temp',unit:'°C',max:50},{id:'sensor-microbit_light',icon:'🔆',label:'Light',unit:'',max:255},{id:'sensor-microbit_p2',icon:'📌',label:'P2',unit:'',max:1023},{id:'binary_sensor-microbit_btn_a',icon:'🅰️',label:'Btn A',unit:'',max:1,binary:true},{id:'binary_sensor-microbit_btn_b',icon:'🅱️',label:'Btn B',unit:'',max:1,binary:true}]
+},
+// MICRO:BIT — BLE (wireless)
+{id:'microbit-ble',icon:'📡',cat:'microbit',stars:2,tpl:'monitor',entity:'sensor-microbit_ble_temperature',
+ en:{name:'micro:bit BLE',desc:'Wireless! No wires between boards. P0, P1, P2 all free for sensors!',
+     challenge:'Connect 3 micro:bits at once — each one a different sensor station!'},
+ fr:{name:'micro:bit BLE',desc:'Sans fil ! Aucun câble entre les cartes. P0, P1, P2 libres pour les capteurs !',
+     challenge:'Connecte 3 micro:bits en même temps — chacun une station capteur !'},
+ pin:'None! Wireless via BLE',
+ yaml:'# ============================================================\n# BLE Gateway — connects to micro:bit NUS UART service\n# ============================================================\n# micro:bit runs bit-playground firmware (BLE UART)\n# and sends: T:23\\nL:142\\nP0:512\\nP1:340\\nP2:0\\nA:1\\nB:0\n#\n# Find your micro:bit MAC address with:\n#   esphome logs kids-lab.yaml\n#   (look for [ble_tracker] lines)\n\nesp32_ble_tracker:\n  scan_parameters:\n    active: true\n\nble_client:\n  - mac_address: "XX:XX:XX:XX:XX:XX"  # ← your micro:bit MAC\n    id: microbit1\n    on_connect:\n      then:\n        - lambda: |-\n            ESP_LOGI("ble", "micro:bit connected!");\n    on_disconnect:\n      then:\n        - lambda: |-\n            ESP_LOGW("ble", "micro:bit disconnected");\n\n# Read NUS TX characteristic (micro:bit → ESP32)\nsensor:\n  - platform: ble_client\n    type: characteristic\n    ble_client_id: microbit1\n    name: "micro:bit Raw"\n    service_uuid: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"\n    characteristic_uuid: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"\n    notify: true\n    # Parse with lambda to extract T, L, P0, P1, P2\n\n# To send commands TO micro:bit (ESP32 → micro:bit):\n# Write to NUS RX characteristic:\n#   service:  6E400001-B5A3-F393-E0A9-E50E24DCCA9E\n#   char:     6E400002-B5A3-F393-E0A9-E50E24DCCA9E',
+ api:[{m:'GET',p:'/sensor/microbit_raw',l:'BLE data'}],
+ wiring:'No wires between boards! 🎉\n\nmicro:bit side:\n  P0 → any sensor (analog/digital)\n  P1 → any sensor (analog/digital)\n  P2 → any sensor (analog/digital)\n  All 3 pins FREE for kid projects!\n\nESP32 side:\n  BLE antenna built-in\n  Just needs power (USB)\n\nRange: ~10 meters indoor',
+ monitors:[{id:'sensor-microbit_ble_temperature',icon:'🌡️',label:'Temp',unit:'°C',max:50},{id:'sensor-microbit_ble_light',icon:'🔆',label:'Light',unit:'',max:255},{id:'sensor-microbit_ble_p0',icon:'📌',label:'P0',unit:'',max:1023},{id:'sensor-microbit_ble_p1',icon:'📌',label:'P1',unit:'',max:1023},{id:'sensor-microbit_ble_p2',icon:'📌',label:'P2',unit:'',max:1023},{id:'binary_sensor-microbit_ble_btn_a',icon:'🅰️',label:'Btn A',unit:'',max:1,binary:true},{id:'binary_sensor-microbit_ble_btn_b',icon:'🅱️',label:'Btn B',unit:'',max:1,binary:true}]
+}
+];
+
+// ============================================================
+// GUIDE PAGES (Setup, YAML, Flash, API, Test, Fix, Help)
+// ============================================================
+var PAGES = {
+home:{icon:'🏠',render:renderHome},
+setup:{icon:'🔧',render:renderSetup},
+yaml:{icon:'📝',render:renderYaml},
+flash:{icon:'⚡',render:renderFlash},
+api:{icon:'🌐',render:renderAPI},
+test:{icon:'🧪',render:renderTest},
+fix:{icon:'🛠️',render:renderFix},
+help:{icon:'❓',render:renderHelp}
+};
+
+// ============================================================
+// STATE
+// ============================================================
+var currentView = 'home'; // page id or component id
+var connected = false;
+var baseUrl = '';
+var sse = null;
+var sseValues = {}; // entity-id → value
+var liveEntities = new Set();
+
+// ============================================================
+// SIDEBAR + NAVIGATION
+// ============================================================
+function buildSidebar(){
+    var sb = document.getElementById('sidebar');
+    var html = '';
+    // Guide section
+    html += '<div class="sidebar-cat">'+t('cat_guide')+'</div>';
+    Object.keys(PAGES).forEach(function(k){
+        html += '<div class="sidebar-item'+(currentView===k?' active':'')+'" onclick="nav(\''+k+'\')" data-id="'+k+'">';
+        html += '<span class="si-icon">'+PAGES[k].icon+'</span>';
+        html += '<span class="si-label" data-i18n="nav_'+k+'">'+t('nav_'+k)+'</span></div>';
+    });
+    // Component sections
+    var cats = [{key:'microbit',label:'cat_microbit'},{key:'output',label:'cat_output'},{key:'sensor',label:'cat_sensor'},{key:'input',label:'cat_input'},{key:'extra',label:'cat_extra'}];
+    cats.forEach(function(c){
+        var items = COMPONENTS.filter(function(x){return x.cat===c.key});
+        if(!items.length) return;
+        html += '<div class="sidebar-div"></div>';
+        html += '<div class="sidebar-cat">'+t(c.label)+'</div>';
+        items.forEach(function(comp){
+            var isLive = liveEntities.has(comp.entity);
+            html += '<div class="sidebar-item'+(currentView===comp.id?' active':'')+'" onclick="nav(\''+comp.id+'\')" data-id="'+comp.id+'">';
+            html += '<span class="si-icon">'+comp.icon+'</span>';
+            html += '<span class="si-label">'+comp[lang].name+'</span>';
+            html += '<span class="si-status'+(isLive?' live':'')+'">LIVE</span>';
+            html += '</div>';
+        });
+    });
+    sb.innerHTML = html;
+    buildMobileBar();
+}
+
+function buildMobileBar(){
+    var mb = document.getElementById('mobileBar');
+    var html = '';
+    Object.keys(PAGES).forEach(function(k){
+        html += '<button class="mobile-pill'+(currentView===k?' active':'')+'" onclick="nav(\''+k+'\')">'+PAGES[k].icon+' '+t('nav_'+k)+'</button>';
+    });
+    html += '<span style="border-left:1px solid var(--border);margin:0 4px"></span>';
+    COMPONENTS.forEach(function(c){
+        html += '<button class="mobile-pill'+(currentView===c.id?' active':'')+'" onclick="nav(\''+c.id+'\')">'+c.icon+'</button>';
+    });
+    mb.innerHTML = html;
+}
+
+function nav(id){
+    currentView = id;
+    render();
+    buildSidebar();
+    document.getElementById('mainContent').scrollTop = 0;
+    // Close sidebar on mobile
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar(){
+    document.getElementById('sidebar').classList.toggle('open');
+    var sb = document.getElementById('sidebar');
+    sb.style.display = sb.classList.contains('open') ? 'block' : '';
+    if(sb.classList.contains('open')){
+        sb.style.position='fixed';sb.style.top='0';sb.style.left='0';sb.style.bottom='0';
+        sb.style.zIndex='100';sb.style.width='220px';sb.style.display='block';
+        sb.style.background='var(--panel-bg)';sb.style.borderRight='1px solid var(--card-border)';
+    } else {
+        sb.removeAttribute('style');
+    }
+}
+
+// ============================================================
+// RENDER ENGINE
+// ============================================================
+function render(){
+    var m = document.getElementById('mainContent');
+    // Is it a page?
+    if(PAGES[currentView]){ PAGES[currentView].render(m); return; }
+    // Is it a component?
+    var comp = COMPONENTS.find(function(c){return c.id===currentView});
+    if(comp){ renderComponent(m, comp); return; }
+    renderHome(m);
+}
+
+// ---- Helper: code block with copy ----
+function codeBlock(code, langLabel){
+    var id = 'cb'+Math.random().toString(36).substr(2,6);
+    return '<div class="code-block"><button class="copy-btn" onclick="copyCode(\''+id+'\')">'+t('copy')+'</button><pre id="'+id+'">'+(langLabel?'':'')+ escHtml(code)+'</pre></div>';
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyCode(id){
+    var el=document.getElementById(id);if(!el)return;
+    navigator.clipboard.writeText(el.textContent).then(function(){
+        var btn=el.parentElement.querySelector('.copy-btn');
+        btn.textContent=t('copied');setTimeout(function(){btn.textContent=t('copy');},1500);
+    });
+}
+
+// ---- Accordion ----
+function acc(title, body, open){
+    return '<div class="acc'+(open?' open':'')+'"><div class="acc-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="acc-arrow">▸</span> '+title+'</div><div class="acc-body">'+body+'</div></div>';
+}
+
+// ============================================================
+// PAGE: HOME
+// ============================================================
+function renderHome(m){
+    m.innerHTML = '<div class="page-title" data-i18n="nav_home">'+t('nav_home')+'</div>'+
+    '<div class="page-tagline">'+t('tag_home')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🚀</span> Quick Start</div>'+
+    '<div class="steps">'+
+    '<div class="step"><strong>'+t('step1')+'</strong><br>'+t('step1d')+codeBlock('pip install esphome')+'</div>'+
+    '<div class="step"><strong>'+t('step2')+'</strong><br>'+t('step2d')+'</div>'+
+    '<div class="step"><strong>'+t('step3')+'</strong><br>'+t('step3d')+codeBlock('esphome run kids-lab.yaml')+'</div>'+
+    '</div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📡</span> Connect & Play</div>'+
+    '<div class="card-sub">'+
+    '1. Join WiFi <strong>"KidsLab"</strong> (no password)<br>'+
+    '2. Open <strong>http://192.168.4.1</strong><br>'+
+    '3. Click the <strong>OFFLINE</strong> chip above → enter IP → connect<br>'+
+    '4. Browse components in the sidebar → test panels light up!'+
+    '</div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🧩</span> 16 Components</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">'+
+    COMPONENTS.map(function(c){
+        return '<button class="btn small" onclick="nav(\''+c.id+'\')">'+c.icon+' '+c[lang].name+'</button>';
+    }).join('')+
+    '</div></div>';
+}
+
+// ============================================================
+// PAGE: SETUP
+// ============================================================
+function renderSetup(m){
+    m.innerHTML = '<div class="page-title">🔧 '+t('nav_setup')+'</div>'+
+    '<div class="page-tagline">'+t('tag_setup')+'</div>'+
+
+    '<div class="card"><div class="card-title"><span class="icon">📦</span> '+t('step1')+'</div>'+
+    '<div class="os-tabs"><button class="os-tab active" onclick="osTab(this,0)">🪟 '+t('win')+'</button><button class="os-tab" onclick="osTab(this,1)">🐧 '+t('lin')+'</button></div>'+
+    '<div class="os-panel active">'+
+    '<div class="steps"><div class="step">Install Python from <a href="https://python.org" target="_blank">python.org</a> — check "Add to PATH"</div>'+
+    '<div class="step">Open PowerShell:'+codeBlock('pip install esphome')+'</div>'+
+    '<div class="step">Verify:'+codeBlock('esphome version')+'</div></div></div>'+
+    '<div class="os-panel">'+
+    '<div class="steps"><div class="step">Install Python:'+codeBlock('sudo apt install -y python3 python3-pip')+'</div>'+
+    '<div class="step">Install ESPHome:'+codeBlock('pip3 install esphome')+'</div>'+
+    '<div class="step">USB permissions:'+codeBlock('sudo usermod -a -G dialout $USER\n# Log out and back in!')+'</div></div></div>'+
+    '</div>'+
+
+    '<div class="card"><div class="card-title"><span class="icon">🔌</span> USB Driver</div>'+
+    '<div class="card-sub">ESP32-C3 SuperMini uses a CH340 USB chip.</div>'+
+    '<div class="hint-box tip"><strong>🐧 Linux:</strong> Already built into the kernel. Nothing to install!</div>'+
+    '<div class="hint-box warn"><strong>🪟 Windows:</strong> Download from <a href="https://www.wch.cn/download/CH341SER_EXE.html" target="_blank">wch.cn</a> → run installer</div>'+
+    '</div>'+
+
+    '<div class="hint-box danger"><strong>⚠️ #1 issue: wrong cable!</strong> Some USB-C cables are charge-only. If your board isn\'t detected, try a different cable.</div>';
+}
+
+// ============================================================
+// PAGE: YAML
+// ============================================================
+function renderYaml(m){
+    var yaml = 'esphome:\n  name: kids-lab\n  friendly_name: Kids Lab\n  platformio_options:\n    board_build.flash_mode: dio  # CRITICAL\n\nesp32:\n  board: esp32-c3-devkitm-1\n  variant: ESP32C3\n  framework:\n    type: arduino\n\nwifi:\n  ap:\n    ssid: "KidsLab"\n    password: ""\n\ncaptive_portal:\n\nweb_server:\n  port: 80\n  version: 3\n  local: true\n\nlogger:\n  level: DEBUG\n\nota:\n  - platform: esphome';
+
+    m.innerHTML = '<div class="page-title">📝 '+t('nav_yaml')+'</div>'+
+    '<div class="page-tagline">'+t('tag_yaml')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">⚙️</span> Base Config</div>'+
+    '<div class="card-sub">This is the minimum YAML that every Kids Lab needs. It sets up WiFi AP, web server, and OTA updates.</div>'+
+    codeBlock(yaml)+'</div>'+
+    '<div class="hint-box danger"><strong>🚨 flash_mode: dio is CRITICAL</strong> Without this, the ESP32-C3 SuperMini will fail to flash. This is the #1 build issue.</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🧩</span> Add Components</div>'+
+    '<div class="card-sub">Pick components from the sidebar and copy their YAML into your config file. Each one adds new REST API endpoints automatically!</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+
+    COMPONENTS.map(function(c){
+        return '<button class="btn small" onclick="nav(\''+c.id+'\')">'+c.icon+' '+c[lang].name+'</button>';
+    }).join('')+'</div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🍳</span> Pre-tested Recipes</div>'+
+    '<div class="card-sub">Complete configs that work together. Copy one, flash, done.</div>'+
+    acc('🟢 Starter — LED + Button + Buzzer','The minimum fun kit. Toggle the LED, press the button, play melodies.'+codeBlock('# Combine YAML from:\n# 💡 Onboard LED\n# 🔘 Push Button\n# 🔔 Passive Buzzer'))+
+    acc('🟡 Sensors — DHT22 + LDR + OLED','Build a mini weather station with live display.'+codeBlock('# Combine YAML from:\n# 🌡️ DHT22\n# ☀️ LDR\n# 🖥️ OLED Display'))+
+    acc('🟠 Lights — NeoPixel + Button + LDR','Smart nightlight that reacts to darkness.'+codeBlock('# Combine YAML from:\n# ✨ NeoPixel Strip\n# 🔘 Push Button\n# ☀️ LDR Light Sensor'))+
+    '</div>';
+}
+
+// ============================================================
+// PAGE: FLASH
+// ============================================================
+function renderFlash(m){
+    m.innerHTML = '<div class="page-title">⚡ '+t('nav_flash')+'</div>'+
+    '<div class="page-tagline">'+t('tag_flash')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🔌</span> First Time: USB</div>'+
+    '<div class="steps">'+
+    '<div class="step">Plug in ESP32-C3 via USB-C</div>'+
+    '<div class="step">Run from your project folder:'+codeBlock('esphome run kids-lab.yaml')+'</div>'+
+    '<div class="step">Choose the serial port when prompted (e.g. COM3 or /dev/ttyUSB0)</div>'+
+    '</div>'+
+    '<div class="hint-box tip"><strong>⏱ First build = 3-8 min.</strong> Downloads the toolchain. After that ~30s.</div>'+
+    '</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📶</span> After First Flash: OTA</div>'+
+    '<div class="card-sub">Once WiFi works, never need USB again!</div>'+
+    codeBlock('esphome run kids-lab.yaml\n# Choose "Over The Air" when prompted')+
+    '</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📋</span> View Logs</div>'+
+    codeBlock('# USB:\nesphome logs kids-lab.yaml\n\n# Wireless:\nesphome logs kids-lab.yaml --device kids-lab.local')+
+    '</div>'+
+    '<div class="hint-box warn"><strong>⚠️ Upload fails?</strong> Hold the BOOT button while plugging in USB, then try again.</div>';
+}
+
+// ============================================================
+// PAGE: API
+// ============================================================
+function renderAPI(m){
+    var rows = '';
+    COMPONENTS.forEach(function(c){
+        if(!c.api||!c.api.length) return;
+        c.api.forEach(function(a){
+            rows += '<tr><td>'+c.icon+' '+c[lang].name+'</td><td><code>'+a.m+'</code></td><td style="font-family:monospace;font-size:.75rem;word-break:break-all">'+escHtml(a.p)+'</td><td>'+a.l+'</td></tr>';
+        });
+    });
+    m.innerHTML = '<div class="page-title">🌐 '+t('nav_api')+'</div>'+
+    '<div class="page-tagline">'+t('tag_api')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📡</span> All Endpoints</div>'+
+    '<div class="card-sub">ESPHome auto-generates these from your YAML. Base URL: <code>http://192.168.4.1</code></div>'+
+    '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.8rem;margin-top:8px">'+
+    '<thead><tr style="border-bottom:1px solid var(--border);text-align:left"><th style="padding:6px 8px">Component</th><th>Method</th><th>Endpoint</th><th>Action</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody></table></div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📺</span> Real-time Events (SSE)</div>'+
+    '<div class="card-sub">Open a persistent connection for live sensor updates:</div>'+
+    codeBlock('GET /events\n\n// Returns stream:\nevent: state\ndata: {"id":"sensor-temperature","state":"23.5","value":23.5}\n\nevent: state\ndata: {"id":"binary_sensor-boot_button","state":"ON","value":true}')+
+    '</div>'+
+    '<div class="hint-box tip"><strong>💡 Test from browser console:</strong><br><code>fetch(\'http://192.168.4.1/light/onboard_led/turn_on\',{method:\'POST\'})</code></div>';
+}
+
+// ============================================================
+// PAGE: TEST
+// ============================================================
+function renderTest(m){
+    m.innerHTML = '<div class="page-title">🧪 '+t('nav_test')+'</div>'+
+    '<div class="page-tagline">'+t('tag_test')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📶</span> Step 1: WiFi</div>'+
+    '<div class="steps"><div class="step">Look for WiFi network <strong>"KidsLab"</strong></div>'+
+    '<div class="step">Connect (no password)</div>'+
+    '<div class="step">Open <strong>http://192.168.4.1</strong> — ESPHome web UI loads!</div></div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">💡</span> Step 2: LED</div>'+
+    '<div class="steps"><div class="step">Find "Onboard LED" in the web UI</div>'+
+    '<div class="step">Toggle it ON → blue LED lights up! 🎉</div></div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📡</span> Step 3: This App</div>'+
+    '<div class="steps"><div class="step">Click the <strong>OFFLINE</strong> chip in the header</div>'+
+    '<div class="step">Enter <strong>192.168.4.1</strong> → Connect</div>'+
+    '<div class="step">Browse components → test panels go live!</div></div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🔧</span> Step 4: curl</div>'+
+    codeBlock('# LED on\ncurl -X POST http://192.168.4.1/light/onboard_led/turn_on\n\n# LED off\ncurl -X POST http://192.168.4.1/light/onboard_led/turn_off\n\n# Play melody\ncurl -X POST http://192.168.4.1/button/play_mario/press')+
+    '</div>';
+}
+
+// ============================================================
+// PAGE: FIX
+// ============================================================
+function renderFix(m){
+    m.innerHTML = '<div class="page-title">🛠️ '+t('nav_fix')+'</div>'+
+    '<div class="page-tagline">'+t('tag_fix')+'</div>'+
+    acc('🔌 "No serial port found"','<strong>Wrong cable</strong> → try another (must be data-capable)<br><strong>Missing driver</strong> → install CH340<br><strong>Port busy</strong> → close Serial Monitor<br><strong>Board stuck</strong> → hold BOOT while plugging USB')+
+    acc('📶 Can\'t see "KidsLab" WiFi','<strong>Board not powered</strong> → check USB, look for LED flash<br><strong>WiFi STA connected</strong> → if it joined home WiFi, AP may not start<br><strong>Check logs</strong> → <code>esphome logs kids-lab.yaml</code>')+
+    acc('🌐 Web UI shows "N/A" for sensors','<strong>Sensor not wired</strong> → normal, shows N/A<br><strong>Wrong pin</strong> → check GPIO numbers<br><strong>DHT22 needs pullup</strong> → 10kΩ between data and 3.3V')+
+    acc('⚡ Build/compile errors','<strong>Clean build:</strong>'+codeBlock('esphome clean kids-lab.yaml\nesphome run kids-lab.yaml'))+
+    acc('🌐 CORS errors in custom web app','<strong>Add to YAML:</strong>'+codeBlock('web_server:\n  port: 80\n  version: 3\n  headers:\n    Access-Control-Allow-Origin: "*"'))+
+    acc('🐧 Linux: "Permission denied"',codeBlock('sudo usermod -a -G dialout $USER\n# Log out and back in!'));
+}
+
+// ============================================================
+// PAGE: HELP
+// ============================================================
+function renderHelp(m){
+    m.innerHTML = '<div class="page-title">❓ '+t('nav_help')+'</div>'+
+    '<div class="page-tagline">'+t('tag_help')+'</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">📖</span> Glossary</div>'+
+    '<div class="card-sub" style="line-height:2">'+
+    '<strong>ESP32</strong> — A tiny computer chip with WiFi + Bluetooth<br>'+
+    '<strong>YAML</strong> — A config language (looks like a shopping list)<br>'+
+    '<strong>OTA</strong> — Over The Air: update without USB cable<br>'+
+    '<strong>GPIO</strong> — General Purpose Input/Output: the pins on your board<br>'+
+    '<strong>PWM</strong> — Pulse Width Modulation: fake analog output<br>'+
+    '<strong>RTTTL</strong> — Ring Tone Transfer Language: compact melody format<br>'+
+    '<strong>REST API</strong> — Web endpoints to control things via HTTP<br>'+
+    '<strong>SSE</strong> — Server-Sent Events: real-time data stream<br>'+
+    '<strong>I2C</strong> — A 2-wire protocol for screens & sensors<br>'+
+    '<strong>ADC</strong> — Analog to Digital Converter: reads voltage levels'+
+    '</div></div>'+
+    '<div class="card"><div class="card-title"><span class="icon">⚡</span> Cheat Sheet</div>'+
+    codeBlock('esphome run kids-lab.yaml     # Compile + flash\nesphome logs kids-lab.yaml    # View live logs\nesphome config kids-lab.yaml  # Validate YAML\nesphome clean kids-lab.yaml   # Clean build cache\nesphome dashboard ./          # Web UI at :6052')+
+    '</div>'+
+    '<div class="card"><div class="card-title"><span class="icon">🔗</span> Links</div>'+
+    '<div class="card-sub" style="line-height:2.2">'+
+    '📗 <a href="https://esphome.io" target="_blank">ESPHome Documentation</a><br>'+
+    '🎵 <a href="https://adamonsoon.github.io/rtttl-play/" target="_blank">RTTTL Melody Player</a><br>'+
+    '🏠 <a href="https://www.home-assistant.io/" target="_blank">Home Assistant</a><br>'+
+    '🔬 <a href="https://github.com/nicmusic/bit-playground" target="_blank">bit-playground (micro:bit)</a>'+
+    '</div></div>';
+}
+
+// ============================================================
+// RENDER: COMPONENT CARD
+// ============================================================
+function renderComponent(m, c){
+    var d = c[lang];
+    var isLive = connected && liveEntities.has(c.entity);
+    var html = '';
+
+    // Title + description
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px">';
+    html += '<div class="page-title">'+c.icon+' '+d.name+'</div>';
+    html += '<div><span class="stars">'+'⭐'.repeat(c.stars)+'</span> <span style="font-size:.7rem;color:var(--muted);margin-left:4px">'+t('pin')+': '+c.pin+'</span></div>';
+    html += '</div>';
+    html += '<div class="page-tagline">'+d.desc+'</div>';
+
+    // TEST PANEL
+    html += '<div class="test-panel'+(connected?'':' offline')+'">';
+    html += '<div class="tp-head"><span>🧪 '+t('try_it')+'</span>';
+    html += '<span class="tp-status '+(isLive?'live':'off')+'">'+(isLive?'● LIVE':'○ '+(connected?t('not_installed'):t('offline')))+'</span></div>';
+
+    if(c.tpl==='action' && c.actions && c.actions.length){
+        html += '<div class="action-row">';
+        c.actions.forEach(function(a){
+            html += '<button class="action-btn'+(a.cls?' '+a.cls:'')+'" onclick="apiCall(\''+a.ep+'\')">'+(a.icon?a.icon+' ':'')+a.label+'</button>';
+        });
+        html += '</div>';
+    }
+    else if(c.tpl==='color' && c.colors){
+        html += '<div class="color-dots">';
+        c.colors.forEach(function(rgb){
+            html += '<div class="color-dot" style="background:rgb('+rgb.join(',')+')" onclick="apiCall(\'/light/neopixels/turn_on?r='+rgb[0]+'&g='+rgb[1]+'&b='+rgb[2]+'&brightness=\'+document.getElementById(\'neoBri\').value)"></div>';
+        });
+        html += '<div class="color-dot off" onclick="apiCall(\'/light/neopixels/turn_off\')">✕</div>';
+        html += '</div>';
+        html += '<div class="slider-wrap"><label>'+t('brightness')+'</label><div class="slider-row"><input type="range" id="neoBri" min="1" max="255" value="200"><span class="slider-val" id="neoBriVal">200</span></div></div>';
+        html += '<div class="action-row" style="margin-top:4px">';
+        (c.effects||[]).forEach(function(e){
+            html += '<button class="action-btn" onclick="apiCall(\'/light/neopixels/turn_on?effect='+encodeURIComponent(e)+'\')">'+e+'</button>';
+        });
+        html += '</div>';
+    }
+    else if(c.tpl==='slider' && c.slider){
+        var s=c.slider;
+        html += '<div class="slider-wrap"><label>'+t('angle')+'</label><div class="slider-row">';
+        html += '<input type="range" min="'+s.min+'" max="'+s.max+'" value="0" oninput="sliderSend(this.value,\''+s.ep+'\',\''+s.unit+'\')">';
+        html += '<span class="slider-val" id="sliderVal">0'+s.unit+'</span></div></div>';
+        html += '<div class="action-row">';
+        (s.presets||[]).forEach(function(p){
+            html += '<button class="action-btn" onclick="setSlider('+p.v+',\''+s.ep+'\',\''+s.unit+'\')">'+p.l+'</button>';
+        });
+        html += '</div>';
+    }
+    else if(c.tpl==='monitor' && c.monitors){
+        html += '<div class="monitor-grid">';
+        c.monitors.forEach(function(mon){
+            var val = sseValues[mon.id];
+            var display = val!==undefined ? (mon.binary?(val?'ON':'—'):parseFloat(val).toFixed(1)+mon.unit) : '--';
+            html += '<div class="monitor-item" id="mon-'+mon.id+'">';
+            html += '<div class="monitor-icon">'+mon.icon+'</div>';
+            html += '<div class="monitor-val" id="mv-'+mon.id+'">'+display+'</div>';
+            html += '<div class="monitor-label">'+mon.label+'</div>';
+            if(!mon.binary) html += '<div class="monitor-bar"><div class="monitor-bar-fill" id="mb-'+mon.id+'" style="width:'+(val!==undefined?Math.min(100,val/mon.max*100):0)+'%"></div></div>';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    if(!c.actions && !c.colors && !c.slider && !c.monitors){
+        html += '<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:16px">📝 This component uses custom rendering. Check the YAML below.</div>';
+    }
+    html += '</div>'; // /test-panel
+
+    // Accordions: Wiring, YAML, API, Challenge
+    html += acc('🔌 '+t('wiring'),'<div class="wiring">'+escHtml(c.wiring)+'</div>');
+    html += acc('📝 '+t('yaml'), codeBlock(c.yaml));
+    if(c.api && c.api.length){
+        var apiHtml = '<table style="width:100%;font-size:.78rem;border-collapse:collapse"><thead><tr style="border-bottom:1px solid var(--border);text-align:left"><th style="padding:4px 6px">Method</th><th>Endpoint</th></tr></thead><tbody>';
+        c.api.forEach(function(a){ apiHtml+='<tr><td style="padding:4px 6px"><code>'+a.m+'</code></td><td style="font-family:monospace;word-break:break-all">'+escHtml(a.p)+'</td></tr>'; });
+        apiHtml += '</tbody></table>';
+        html += acc('🌐 '+t('api_ref'), apiHtml);
+    }
+    html += acc('🎯 '+t('challenge'),'<div style="font-size:.9rem;padding:4px">'+d.challenge+'</div>');
+
+    m.innerHTML = html;
+
+    // Bind brightness slider display
+    var briSlider = document.getElementById('neoBri');
+    if(briSlider){
+        briSlider.oninput = function(){ document.getElementById('neoBriVal').textContent = this.value; };
+    }
+}
+
+// ============================================================
+// API + CONNECTION
+// ============================================================
+function openConn(){ document.getElementById('connOverlay').classList.add('open'); }
+function closeConn(){ document.getElementById('connOverlay').classList.remove('open'); }
+
+function doConnect(){
+    var ip = document.getElementById('connIP').value.trim();
+    if(!ip) return;
+    if(ip.indexOf('http')!==0) ip = 'http://'+ip;
+    if(ip.slice(-1)==='/') ip = ip.slice(0,-1);
+    baseUrl = ip;
+    document.getElementById('connMsg').className = 'conn-msg';
+    document.getElementById('connMsg').textContent = 'Connecting...';
+
+    fetch(baseUrl+'/sensor/uptime',{signal:AbortSignal.timeout(4000)})
+    .then(function(r){if(r.ok)return r.json();throw new Error(r.status);})
+    .then(function(){ onConnected(); })
+    .catch(function(){
+        // Try no-cors
+        fetch(baseUrl,{mode:'no-cors',signal:AbortSignal.timeout(4000)})
+        .then(function(){ onConnected(); })
+        .catch(function(){
+            document.getElementById('connMsg').className='conn-msg err';
+            document.getElementById('connMsg').textContent='❌ Cannot reach '+baseUrl;
+        });
+    });
+}
+
+function onConnected(){
+    connected = true;
+    closeConn();
+    document.getElementById('connChip').classList.add('connected');
+    document.getElementById('connLabel').textContent = t('ready');
+    startSSE();
+    render();
+    buildSidebar();
+}
+
+function doDisconnect(){
+    connected = false;
+    if(sse){sse.close();sse=null;}
+    liveEntities.clear();
+    sseValues = {};
+    document.getElementById('connChip').classList.remove('connected');
+    document.getElementById('connLabel').textContent = t('offline');
+    render();
+    buildSidebar();
+}
+
+function apiCall(path){
+    if(!connected) return;
+    fetch(baseUrl+path,{method:'POST'}).catch(function(){});
+}
+
+function sliderSend(val,ep,unit){
+    document.getElementById('sliderVal').textContent = val+unit;
+    clearTimeout(sliderSend._t);
+    sliderSend._t = setTimeout(function(){ apiCall(ep+val); },80);
+}
+
+function setSlider(val,ep,unit){
+    var el = document.querySelector('.slider-wrap input[type="range"]');
+    if(el) el.value = val;
+    document.getElementById('sliderVal').textContent = val+unit;
+    apiCall(ep+val);
+}
+
+// SSE
+function startSSE(){
+    if(sse)sse.close();
+    try{
+        sse = new EventSource(baseUrl+'/events');
+        sse.addEventListener('state',function(e){
+            try{
+                var d=JSON.parse(e.data);
+                var id=d.id||'';
+                sseValues[id] = d.value!==undefined?d.value:d.state;
+                liveEntities.add(id);
+                // Update monitor displays if visible
+                var valEl = document.getElementById('mv-'+id);
+                if(valEl){
+                    var comp = COMPONENTS.find(function(c){return c.monitors&&c.monitors.some(function(m){return m.id===id});});
+                    if(comp){
+                        var mon = comp.monitors.find(function(m){return m.id===id});
+                        if(mon){
+                            var v = sseValues[id];
+                            valEl.textContent = mon.binary?(v?'ON':'—'):parseFloat(v).toFixed(1)+mon.unit;
+                            var bar = document.getElementById('mb-'+id);
+                            if(bar) bar.style.width = Math.min(100,(mon.binary?v*100:v/mon.max*100))+'%';
+                        }
+                    }
+                }
+                // Update LED indicator
+                if(id==='light-onboard_led'){
+                    var ind=document.querySelector('.action-btn.on');
+                    // Update sidebar live badges
+                    buildSidebar();
+                }
+            }catch(err){}
+        });
+        sse.onerror = function(){
+            // auto-reconnects
+        };
+    }catch(err){}
+}
+
+// ============================================================
+// OS TABS
+// ============================================================
+function osTab(btn, idx){
+    var parent = btn.parentElement;
+    var tabs = parent.querySelectorAll('.os-tab');
+    tabs.forEach(function(t){t.classList.remove('active');});
+    btn.classList.add('active');
+    var panels = [];
+    var el = parent.nextElementSibling;
+    while(el && el.classList.contains('os-panel')){panels.push(el);el=el.nextElementSibling;}
+    panels.forEach(function(p,i){p.classList.toggle('active',i===idx);});
+}
+
+// ============================================================
+// THEME + LANGUAGE
+// ============================================================
+function setTheme(name){
+    document.documentElement.setAttribute('data-theme',name);
+    document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-theme')===name);});
+}
+
+function setLang(l){
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent.trim()===l.toUpperCase());});
+    // Update all data-i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+        var k = el.getAttribute('data-i18n');
+        if(T[lang]&&T[lang][k]) el.textContent = T[lang][k];
+    });
+    render();
+    buildSidebar();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function(){
+    buildSidebar();
+    render();
+    // Auto-detect if served from ESP32
+    var h = location.hostname;
+    if(h && h!=='localhost' && h!=='127.0.0.1' && h!==''){
+        document.getElementById('connIP').value = h;
+        setTimeout(function(){ doConnect(); },800);
+    }
+})();
+</script>
+</body>
+</html>

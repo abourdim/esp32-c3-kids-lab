@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kids Lab 🔬 ESPHome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+</head>
+<body>
+<div id="app">
+
+    <!-- ============================== -->
+    <!-- CONNECT SCREEN                 -->
+    <!-- ============================== -->
+    <div id="connectScreen" class="screen active">
+        <div class="connect-card">
+            <div class="connect-logo">🔬</div>
+            <h1>Kids Lab</h1>
+            <p class="connect-sub">ESPHome Edition</p>
+
+            <div class="connect-form">
+                <label for="ipInput">ESP32 IP Address</label>
+                <div class="ip-row">
+                    <input type="text" id="ipInput" value="192.168.4.1" placeholder="192.168.4.1"
+                           spellcheck="false" autocomplete="off">
+                    <button class="btn-connect" id="btnConnect" onclick="doConnect()">
+                        <span class="btn-text">Connect</span>
+                        <span class="btn-spinner" style="display:none"></span>
+                    </button>
+                </div>
+                <div class="ip-hints">
+                    <button class="hint-chip" onclick="setIP('192.168.4.1')">📶 AP Mode</button>
+                    <button class="hint-chip" onclick="setIP('kids-lab.local')">🏠 mDNS</button>
+                </div>
+            </div>
+
+            <div id="connectStatus" class="connect-status"></div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- MAIN SCREEN                    -->
+    <!-- ============================== -->
+    <div id="mainScreen" class="screen">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <span class="header-logo">🔬</span>
+                <span class="header-title">Kids Lab</span>
+            </div>
+            <div class="header-right">
+                <div id="connBadge" class="conn-badge">
+                    <span class="conn-dot"></span>
+                    <span id="connLabel">--</span>
+                </div>
+                <button class="btn-icon" onclick="doDisconnect()" title="Disconnect">✕</button>
+            </div>
+        </header>
+
+        <!-- Module Tabs -->
+        <nav class="tab-bar" id="tabBar">
+            <button class="tab active" data-mod="led" onclick="showMod('led')">🎨 LED</button>
+            <button class="tab" data-mod="music" onclick="showMod('music')">🎵 Music</button>
+            <button class="tab" data-mod="sensors" onclick="showMod('sensors')">🌡️ Sensors</button>
+            <button class="tab" data-mod="servo" onclick="showMod('servo')">⚙️ Servo</button>
+            <button class="tab" data-mod="log" onclick="showMod('log')">📋 Log</button>
+        </nav>
+
+        <!-- ============================== -->
+        <!-- LED MODULE                     -->
+        <!-- ============================== -->
+        <section id="mod-led" class="module active">
+            <div class="mod-header">
+                <h2>🎨 LED Lab</h2>
+                <p>Control the onboard LED and NeoPixel strip</p>
+            </div>
+
+            <!-- Onboard LED -->
+            <div class="card">
+                <h3>Onboard LED</h3>
+                <div class="btn-row">
+                    <button class="btn big green" onclick="api('/light/onboard_led/turn_on','POST')">💡 ON</button>
+                    <button class="btn big dim" onclick="api('/light/onboard_led/turn_off','POST')">OFF</button>
+                </div>
+                <div class="led-indicator" id="indLed">OFF</div>
+            </div>
+
+            <!-- NeoPixel Colors -->
+            <div class="card">
+                <h3>NeoPixel Colors</h3>
+                <div class="color-grid">
+                    <button class="color-btn" style="--c:#ff0000" onclick="neoColor(255,0,0)" title="Red"></button>
+                    <button class="color-btn" style="--c:#ff8800" onclick="neoColor(255,136,0)" title="Orange"></button>
+                    <button class="color-btn" style="--c:#ffff00" onclick="neoColor(255,255,0)" title="Yellow"></button>
+                    <button class="color-btn" style="--c:#00ff00" onclick="neoColor(0,255,0)" title="Green"></button>
+                    <button class="color-btn" style="--c:#00ffff" onclick="neoColor(0,255,255)" title="Cyan"></button>
+                    <button class="color-btn" style="--c:#0088ff" onclick="neoColor(0,136,255)" title="Blue"></button>
+                    <button class="color-btn" style="--c:#8800ff" onclick="neoColor(136,0,255)" title="Purple"></button>
+                    <button class="color-btn" style="--c:#ff00ff" onclick="neoColor(255,0,255)" title="Pink"></button>
+                    <button class="color-btn" style="--c:#ffffff" onclick="neoColor(255,255,255)" title="White"></button>
+                    <button class="color-btn off-btn" onclick="api('/light/neopixels/turn_off','POST')" title="Off">✕</button>
+                </div>
+
+                <label class="slider-label">Brightness</label>
+                <input type="range" class="slider" id="neoBrightness" min="1" max="255" value="200"
+                       oninput="neoColorFromPicker()">
+
+                <label class="slider-label">Custom Color</label>
+                <input type="color" id="neoCustomColor" value="#ff0088" class="color-picker"
+                       oninput="neoColorFromPicker()">
+            </div>
+
+            <!-- NeoPixel Effects -->
+            <div class="card">
+                <h3>NeoPixel Effects</h3>
+                <div class="btn-row wrap">
+                    <button class="btn effect" onclick="neoEffect('Rainbow')">🌈 Rainbow</button>
+                    <button class="btn effect" onclick="neoEffect('Color Wipe')">🎨 Wipe</button>
+                    <button class="btn effect" onclick="neoEffect('Pulse')">💓 Pulse</button>
+                    <button class="btn effect" onclick="neoEffect('Strobe')">⚡ Strobe</button>
+                    <button class="btn dim" onclick="neoEffect('None')">Stop Effect</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- MUSIC MODULE                   -->
+        <!-- ============================== -->
+        <section id="mod-music" class="module">
+            <div class="mod-header">
+                <h2>🎵 Music Maker</h2>
+                <p>Play melodies and tones on the buzzer</p>
+            </div>
+
+            <!-- Melodies -->
+            <div class="card">
+                <h3>Melodies</h3>
+                <div class="btn-row wrap">
+                    <button class="btn melody" onclick="api('/button/play_mario/press','POST')">🍄 Mario</button>
+                    <button class="btn melody" onclick="api('/button/play_starwars/press','POST')">⭐ Star Wars</button>
+                    <button class="btn melody" onclick="api('/button/play_beep/press','POST')">🔔 Beep</button>
+                    <button class="btn dim" onclick="api('/button/stop_buzzer/press','POST')">🔇 Stop</button>
+                </div>
+            </div>
+
+            <!-- Piano -->
+            <div class="card">
+                <h3>Piano</h3>
+                <p class="card-hint">Each key sends an RTTTL single-note command</p>
+                <div class="piano">
+                    <div class="piano-octave">
+                        <button class="piano-key white" onpointerdown="playNote('c5')" data-note="C">C</button>
+                        <button class="piano-key black" onpointerdown="playNote('c#5')" data-note="C#"></button>
+                        <button class="piano-key white" onpointerdown="playNote('d5')" data-note="D">D</button>
+                        <button class="piano-key black" onpointerdown="playNote('d#5')" data-note="D#"></button>
+                        <button class="piano-key white" onpointerdown="playNote('e5')" data-note="E">E</button>
+                        <button class="piano-key white" onpointerdown="playNote('f5')" data-note="F">F</button>
+                        <button class="piano-key black" onpointerdown="playNote('f#5')" data-note="F#"></button>
+                        <button class="piano-key white" onpointerdown="playNote('g5')" data-note="G">G</button>
+                        <button class="piano-key black" onpointerdown="playNote('g#5')" data-note="G#"></button>
+                        <button class="piano-key white" onpointerdown="playNote('a5')" data-note="A">A</button>
+                        <button class="piano-key black" onpointerdown="playNote('a#5')" data-note="A#"></button>
+                        <button class="piano-key white" onpointerdown="playNote('b5')" data-note="B">B</button>
+                        <button class="piano-key white" onpointerdown="playNote('c6')" data-note="C+">C+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- SENSORS MODULE                 -->
+        <!-- ============================== -->
+        <section id="mod-sensors" class="module">
+            <div class="mod-header">
+                <h2>🌡️ Sensor Explorer</h2>
+                <p>Real-time data streaming via Server-Sent Events</p>
+            </div>
+
+            <div class="sensor-grid">
+                <div class="sensor-card" id="cardTemp">
+                    <div class="sensor-icon">🌡️</div>
+                    <div class="sensor-value" id="valTemp">--</div>
+                    <div class="sensor-label">Temperature</div>
+                    <div class="sensor-bar"><div class="sensor-fill" id="fillTemp" style="width:0%"></div></div>
+                </div>
+                <div class="sensor-card" id="cardHum">
+                    <div class="sensor-icon">💧</div>
+                    <div class="sensor-value" id="valHum">--</div>
+                    <div class="sensor-label">Humidity</div>
+                    <div class="sensor-bar"><div class="sensor-fill hum" id="fillHum" style="width:0%"></div></div>
+                </div>
+                <div class="sensor-card" id="cardLight">
+                    <div class="sensor-icon">☀️</div>
+                    <div class="sensor-value" id="valLight">--</div>
+                    <div class="sensor-label">Light Level</div>
+                    <div class="sensor-bar"><div class="sensor-fill light" id="fillLight" style="width:0%"></div></div>
+                </div>
+                <div class="sensor-card" id="cardBtn">
+                    <div class="sensor-icon">🔘</div>
+                    <div class="sensor-value" id="valBtn">--</div>
+                    <div class="sensor-label">Boot Button</div>
+                </div>
+                <div class="sensor-card" id="cardBtn2">
+                    <div class="sensor-icon">🟢</div>
+                    <div class="sensor-value" id="valBtn2">--</div>
+                    <div class="sensor-label">Push Button</div>
+                </div>
+                <div class="sensor-card" id="cardUptime">
+                    <div class="sensor-icon">⏱️</div>
+                    <div class="sensor-value" id="valUptime">--</div>
+                    <div class="sensor-label">Uptime</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:1rem">
+                <div class="sse-status">
+                    <span class="sse-dot" id="sseDot"></span>
+                    <span id="sseLabel">Event stream not connected</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- SERVO MODULE                   -->
+        <!-- ============================== -->
+        <section id="mod-servo" class="module">
+            <div class="mod-header">
+                <h2>⚙️ Servo Control</h2>
+                <p>Move the servo by dragging the slider or tapping presets</p>
+            </div>
+
+            <div class="card">
+                <h3>Servo Angle</h3>
+                <div class="servo-display">
+                    <div class="servo-gauge" id="servoGauge">
+                        <div class="servo-needle" id="servoNeedle"></div>
+                        <div class="servo-center"></div>
+                    </div>
+                    <div class="servo-value" id="servoVal">0°</div>
+                </div>
+                <input type="range" class="slider servo-slider" id="servoSlider" min="-100" max="100" value="0"
+                       oninput="onServoSlider(this.value)">
+                <div class="btn-row wrap" style="margin-top:0.8rem">
+                    <button class="btn small" onclick="setServo(-100)">◀ -100</button>
+                    <button class="btn small" onclick="setServo(-50)">-50</button>
+                    <button class="btn small green" onclick="setServo(0)">Center</button>
+                    <button class="btn small" onclick="setServo(50)">50</button>
+                    <button class="btn small" onclick="setServo(100)">100 ▶</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Sweep Animation</h3>
+                <div class="btn-row">
+                    <button class="btn" id="btnSweep" onclick="toggleSweep()">▶ Start Sweep</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- LOG MODULE                     -->
+        <!-- ============================== -->
+        <section id="mod-log" class="module">
+            <div class="mod-header">
+                <h2>📋 Event Log</h2>
+                <p>All API calls and SSE events</p>
+            </div>
+
+            <div class="card">
+                <div class="log-controls">
+                    <input type="text" id="apiInput" placeholder="e.g. /light/onboard_led/turn_on"
+                           spellcheck="false" onkeydown="if(event.key==='Enter')sendCustomAPI()">
+                    <select id="apiMethod">
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                    </select>
+                    <button class="btn" onclick="sendCustomAPI()">Send</button>
+                </div>
+                <div class="log-toolbar">
+                    <label><input type="checkbox" id="logSSE" checked> Show SSE events</label>
+                    <button class="btn small dim" onclick="clearLog()">Clear</button>
+                </div>
+                <div id="logBox" class="log-box"></div>
+            </div>
+        </section>
+
+    </div><!-- /mainScreen -->
+</div><!-- /app -->
+
+<script src="app.js"></script>
+</body>
+</html>
