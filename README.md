@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/ESPHome-Kids%20Lab-22c55e?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome">
   <img src="https://img.shields.io/badge/ESP32--C3-SuperMini-3b82f6?style=for-the-badge&logo=espressif&logoColor=white" alt="ESP32-C3">
   <img src="https://img.shields.io/badge/micro%3Abit-BLE%20%2B%20UART-f97316?style=for-the-badge&logo=micro:bit&logoColor=white" alt="micro:bit">
-  <img src="https://img.shields.io/badge/version-1.2-9ca3af?style=for-the-badge" alt="v1.2">
+  <img src="https://img.shields.io/badge/version-1.8-9ca3af?style=for-the-badge" alt="v1.8">
 </p>
 
 ---
@@ -50,12 +50,14 @@ All from your phone. No app to install. Just WiFi.
 | Feature | What it means for you |
 |---|---|
 | **Zero code** | Write YAML (looks like a shopping list), not C++ |
+| **YAML Builder** | Pick components → get a ready-to-flash YAML file. Download or copy! |
 | **WiFi web app** | Control everything from any browser — phone, tablet, laptop |
 | **REST API** | Every component = a web URL you can call |
 | **Live updates** | Sensor values stream to your screen in real-time (SSE) |
 | **4 themes** | 🌙 Stealth · ⚡ Neon · ☁️ Arctic · 🔥 Blaze |
-| **2 languages** | 🇬🇧 English · 🇫🇷 Français |
+| **3 languages** | 🇬🇧 English · 🇫🇷 Français · 🇸🇦 العربية (RTL!) |
 | **micro:bit bridge** | Your micro:bit becomes a wireless sensor node! |
+| **Remembers you** | Theme, language, last page, ESP32 IP — saved between visits |
 | **Home Assistant** | Auto-discovered. Voice control: "Hey Google, turn on the LED" |
 | **OTA updates** | After first flash, update wirelessly. Never unplug! |
 
@@ -415,27 +417,66 @@ The built-in ESPHome UI is functional but boring. Our custom web app has:
 - 🎹 Color pickers for NeoPixels
 - ⚙️ Visual servo control with presets
 - 🔔 One-click melody buttons
+- 🏗️ YAML Builder with download
 - 🤖 micro:bit bridge integration
-- 🌍 English + French
+- 🌍 English + French + Arabic (RTL)
+- 💾 Remembers your preferences
 
-### How to use it
+### 🏗️ YAML Builder
 
-**Option A — Open the HTML file directly:**
+The killer feature for kids. No typing, no merging, no mistakes:
 
-1. Download `esphome-kids-lab.html`
+```
+┌─────────────────────────────────────────────┐
+│  🍳 Quick Recipes                           │
+│  [🟢 Starter] [🟡 Weather] [🟣 Lights] [🔴 Full] │
+│                                             │
+│  🧩 Pick Your Components (tap to toggle)    │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐           │
+│  │ 💡  │ │ ✨⬇️│ │ 🔔⬇️│ │ ⚙️  │           │
+│  │ LED │ │Neo ✓│ │Buzz✓│ │Servo│           │
+│  └─────┘ └─────┘ └─────┘ └─────┘           │
+│                                             │
+│  📄 Your YAML Config                        │
+│  ┌─────────────────────────────────────┐    │
+│  │ esphome:                            │    │
+│  │   name: kids-lab                    │    │
+│  │ ...                                 │    │
+│  │ light:                              │    │
+│  │   # --- ✨ NeoPixel Strip ---       │    │
+│  │   - platform: neopixelbus           │    │
+│  │ ...                                 │    │
+│  └─────────────────────────────────────┘    │
+│  [📋 COPY ENTIRE YAML] [📥 DOWNLOAD .yaml] │
+└─────────────────────────────────────────────┘
+```
+
+**How it works:**
+
+1. Tap recipe or pick individual components
+2. YAML generates instantly — smart merge handles duplicate keys
+3. Click **📥 DOWNLOAD** → get `kids-lab.yaml` ready to flash
+4. Or click **⬇️** on any card to download a single component's YAML
+5. `esphome run kids-lab.yaml` → done!
+
+### How to use the web app
+
+**Option A — GitHub Pages (easiest):**
+
+Visit the live app → [abourdim.github.io/esp32-c3-kids-lab](https://abourdim.github.io/esp32-c3-kids-lab/)
+
+**Option B — Open locally:**
+
+1. Download `index.html`
 2. Open it in your browser
 3. Click the **OFFLINE** chip → enter `192.168.4.1` → Connect
 4. Browse components → test panels light up!
 
-**Option B — Served from ESP32 (advanced):**
+**Option C — Served from ESP32 (advanced):**
 
 1. Create a `www/` folder in your project
 2. Put the web app files inside
 3. ESPHome serves them at `http://192.168.4.1/`
-
-**Option C — GitHub Pages:**
-
-Fork this repo → enable Pages → access from anywhere!
 
 ---
 
@@ -505,9 +546,9 @@ uart:
 ## 📁 Project Structure
 
 ```
-kids-lab/
+esp32-c3-kids-lab/
+├── index.html                 ← Web app + guide (single file! GitHub Pages ready)
 ├── kids-lab.yaml              ← ESPHome firmware config
-├── esphome-kids-lab.html      ← Custom web app (single file!)
 ├── logo.svg                   ← Workshop-DIY logo
 ├── README.md                  ← You are here!
 └── www/                       ← (optional) files served by ESP32
@@ -713,7 +754,7 @@ Already seen the [PlatformIO version](https://github.com/nicmusic/bit-playground
 ## 🙏 Credits
 
 - **[ESPHome](https://esphome.io)** — The amazing YAML-to-firmware framework
-- **[Workshop-DIY](https://github.com/nicmusic)** — The maker lab behind all this
+- **[Workshop-DIY](https://github.com/abourdim)** — The maker lab behind all this
 - **[bit-playground](https://github.com/nicmusic/bit-playground)** — The micro:bit web companion
 
 ---
@@ -725,6 +766,12 @@ Already seen the [PlatformIO version](https://github.com/nicmusic/bit-playground
 | v1.0 | 2026-02-14 | Initial release — 15 components, web app, EN/FR |
 | v1.1 | 2026-02-14 | micro:bit split into UART + BLE, own sidebar category |
 | v1.2 | 2026-02-14 | Version tag in header, versioned output files |
+| v1.3 | 2026-02-14 | First GitHub release |
+| v1.4 | 2026-02-14 | Arabic + RTL support (EN/FR/عر trilingual) |
+| v1.5 | 2026-02-14 | 13 UI fixes: accordions, footer, wiring colors, Arctic theme |
+| v1.6 | 2026-02-14 | localStorage persistence: theme, language, last view, IP |
+| v1.7 | 2026-02-14 | YAML Builder: component picker, 4 recipes, smart merge |
+| v1.8 | 2026-02-14 | YAML Builder: download per component + full config |
 
 ---
 
